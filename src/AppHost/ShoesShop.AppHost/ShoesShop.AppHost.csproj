@@ -11,10 +11,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Catalog.Api\Catalog.Api.csproj" />
+      <ProjectReference Include="..\..\Basket.Api\Basket.Api.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.5.4" />
+      <PackageReference Include="Aspire.Hosting.Redis" Version="13.5.4" />
     </ItemGroup>
 
 </Project>
