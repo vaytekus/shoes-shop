@@ -9,7 +9,14 @@ using FluentValidation;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddRedisClient("redis");
+builder.AddRedisClient("redis", configureOptions: options =>
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        options.Ssl = false;
+        options.AbortOnConnectFail = false;
+    }
+});
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
