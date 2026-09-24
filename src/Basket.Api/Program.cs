@@ -5,17 +5,30 @@ using Basket.Api.Infrastructure;
 using MediatR;
 using Scalar.AspNetCore;
 using FluentValidation;
+using StackExchange.Redis;
+using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddRedisClient("redis", configureOptions: options =>
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
 {
-    if (builder.Environment.IsDevelopment())
+    // services__redis__tcp__0 = "tcp://localhost:PORT" — plain endpoint без SSL
+    var tcpUrl = builder.Configuration["services__redis__tcp__0"];
+
+    if (builder.Environment.IsDevelopment() && tcpUrl != null)
     {
-        options.Ssl = false;
-        options.AbortOnConnectFail = false;
+        var hostPort = tcpUrl.Replace("tcp://", "");
+        var sslCs = builder.Configuration.GetConnectionString("redis") ?? "";
+        var match = System.Text.RegularExpressions.Regex.Match(sslCs, @"password=([^,]+)");
+        var cs = match.Success ? $"{hostPort},password={match.Groups[1].Value}" : hostPort;
+        return ConnectionMultiplexer.Connect(cs);
     }
+
+    // Production: Azure Redis — ssl=true залишається
+    var opts = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("redis")!);
+    return ConnectionMultiplexer.Connect(opts);
 });
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

@@ -3,6 +3,7 @@
   <Project Path="Basket.Api/Basket.Api.csproj" />
   <Project Path="Catalog.Api/Catalog.Api.csproj" />
   <Project Path="Gateway/Gateway.csproj" />
+  <Project Path="Order.Api/Order.Api.csproj" />
   <Project Path="ServiceDefaults/ShoesShop.ServiceDefaults/ShoesShop.ServiceDefaults.csproj" />
   <Project Path="Shared/ShoesShop.Shared/ShoesShop.Shared.csproj" />
 </Solution>
