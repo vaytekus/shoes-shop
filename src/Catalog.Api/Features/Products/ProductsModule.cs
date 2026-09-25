@@ -10,22 +10,27 @@ public static class ProductsModule
 {
     public static IEndpointRouteBuilder MapProducts(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/products");
+        var group = app.MapGroup("/api/products").WithTags("Products");
 
         group.MapGet("/", GetProductsEndpoint.Handle)
-            .WithName("GetProducts");
+            .WithName("GetProducts")
+            .WithSummary("GetProducts");
 
         group.MapPost("/", CreateProductEndpoint.Handle)
-            .WithName("CreateProduct");
+            .WithName("CreateProduct")
+            .WithSummary("CreateProduct");
 
         group.MapGet("/{id:guid}", GetProductByIdEndpoint.Handle)
-            .WithName("GetProductById");
+            .WithName("GetProductById")
+            .WithSummary("GetProductById");
 
         group.MapPut("/{id:guid}", UpdateProductEndpoint.Handle)
-            .WithName("UpdateProduct");
+            .WithName("UpdateProduct")
+            .WithSummary("UpdateProduct");
 
         group.MapDelete("/{id:guid}", DeleteProductEndpoint.Handle)
-            .WithName("DeleteProduct");
+            .WithName("DeleteProduct")
+            .WithSummary("DeleteProduct");
 
         return app;
     }

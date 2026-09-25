@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Basket.Api.Behaviors;
 using Basket.Api.Exceptions;
 using Basket.Api.Features.Basket;
@@ -43,6 +44,9 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBeh
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 
 builder.Services.AddOpenApi();
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 var app = builder.Build();
 

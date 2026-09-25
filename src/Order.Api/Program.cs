@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Order.Api.Behaviors;
 using Order.Api.Exceptions;
 using Order.Api.Features.Orders;
@@ -25,6 +26,9 @@ builder.Services.AddDbContext<OrderDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("order-db")));
 
 builder.Services.AddOpenApi();
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 var app = builder.Build();
 

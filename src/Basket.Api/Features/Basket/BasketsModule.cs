@@ -10,22 +10,27 @@ public static class BasketsModule
 {
     public static IEndpointRouteBuilder MapBasket(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/basket");
+        var group = app.MapGroup("/api/basket").WithTags("Basket");
 
         group.MapGet("/{customerId}", GetBasketEndpoint.Handle)
-            .WithName("GetBasket");
+            .WithName("GetBasket")
+            .WithSummary("GetBasket");
 
         group.MapPost("/{customerId}/items", AddItemEndpoint.Handle)
-            .WithName("AddProduct");
+            .WithName("AddProduct")
+            .WithSummary("AddProduct");
 
         group.MapDelete("/{customerId}/items/{productId}", RemoveItemEndpoint.Handle)
-            .WithName("RemoveProduct");
+            .WithName("RemoveProduct")
+            .WithSummary("RemoveProduct");
 
         group.MapDelete("/{customerId}", ClearBasketEndpoint.Handle)
-            .WithName("ClearBasket");
+            .WithName("ClearBasket")
+            .WithSummary("ClearBasket");
 
         group.MapPut("/{customerId}/items/{productId}", UpdateItemEndpoint.Handle)
-            .WithName("UpdateProduct");
+            .WithName("UpdateProduct")
+            .WithSummary("UpdateProduct");
 
         return app;
     }

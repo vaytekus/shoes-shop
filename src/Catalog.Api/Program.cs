@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Catalog.Api.Behaviors;
 using Catalog.Api.Exceptions;
 using Catalog.Api.Features.Products;
@@ -23,6 +24,9 @@ builder.Services.AddDbContext<CatalogDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("catalog-db")));
 
 builder.Services.AddOpenApi();
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 var app = builder.Build();
 
