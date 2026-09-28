@@ -23,4 +23,12 @@ var order = builder.AddProject<Projects.Order_Api>("order")
     .WithReference(orderDb)
     .WaitFor(orderDb);
 
+var gateway = builder.AddProject<Projects.Gateway>("gateway")
+    .WithReference(catalog)
+    .WithReference(basket)
+    .WithReference(order)
+    .WaitFor(catalog)
+    .WaitFor(basket)
+    .WaitFor(order);
+
 builder.Build().Run();
