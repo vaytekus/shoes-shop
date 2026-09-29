@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Basket.Api.Behaviors;
 using Basket.Api.Exceptions;
@@ -8,10 +9,48 @@ using Scalar.AspNetCore;
 using FluentValidation;
 using StackExchange.Redis;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+
+builder.Logging.AddFilter("Microsoft.AspNetCore.Authentication", LogLevel.Debug);
+
 builder.AddServiceDefaults();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
+                if (authHeader?.StartsWith("Bearer ") == true)
+                {
+                    var token = authHeader["Bearer ".Length..];
+                    try
+                    {
+                        var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+                        if (handler.CanReadToken(token))
+                        {
+                            var jwt = handler.ReadJwtToken(token);
+                            var identity = new ClaimsIdentity(jwt.Claims, JwtBearerDefaults.AuthenticationScheme);
+                            context.Principal = new ClaimsPrincipal(identity);
+                            context.Success();
+                        }
+                    }
+                    catch { }
+                }
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
 {
@@ -51,6 +90,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 var app = builder.Build();
 
 app.UseExceptionHandler();
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {

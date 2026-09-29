@@ -12,15 +12,21 @@ var catalog = builder.AddProject<Projects.Catalog_Api>("catalog")
 
 var redis = builder.AddRedis("redis");
 
+var keycloak = builder.AddKeycloak("keycloak", port: 8080)
+    .WithDataVolume()
+    .WithRealmImport("KeycloakConfig");
+
 var basket = builder.AddProject<Projects.Basket_Api>("basket")
     .WithReference(redis)
     .WithReference(redis.GetEndpoint("tcp"))
+    .WithReference(keycloak)
     .WaitFor(redis);
 
 var orderDb = postgres.AddDatabase("order-db");
 
 var order = builder.AddProject<Projects.Order_Api>("order")
     .WithReference(orderDb)
+    .WithReference(keycloak)
     .WaitFor(orderDb);
 
 var gateway = builder.AddProject<Projects.Gateway>("gateway")
