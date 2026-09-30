@@ -4,6 +4,7 @@ using Order.Api.Behaviors;
 using Order.Api.Exceptions;
 using Order.Api.Features.Orders;
 using FluentValidation;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +59,12 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBeh
 
 builder.Services.AddDbContext<OrderDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("order-db")));
+
+builder.Services.AddMassTransit(x => {
+    x.UsingRabbitMq((ctx, cfg) => {
+        cfg.Host(builder.Configuration.GetConnectionString("rabbitmq"));
+    });
+});
 
 builder.Services.AddOpenApi();
 
