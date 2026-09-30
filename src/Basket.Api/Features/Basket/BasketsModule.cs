@@ -10,7 +10,8 @@ public static class BasketsModule
 {
     public static IEndpointRouteBuilder MapBasket(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/basket").WithTags("Basket");
+        var group = app.MapGroup("/api/basket").WithTags("Basket")
+            .RequireAuthorization();
 
         group.MapGet("/{customerId}", GetBasketEndpoint.Handle)
             .WithName("GetBasket")

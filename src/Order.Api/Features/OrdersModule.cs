@@ -10,7 +10,8 @@ public static class OrdersModule
 {
     public static IEndpointRouteBuilder MapOrders(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/orders").WithTags("Orders");
+        var group = app.MapGroup("/api/orders").WithTags("Orders")
+            .RequireAuthorization();
 
         group.MapGet("/", GetAllOrdersEndpoint.Handle)
             .WithName("GetAllOrders")
