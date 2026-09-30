@@ -9,8 +9,10 @@ using Scalar.AspNetCore;
 using FluentValidation;
 using StackExchange.Redis;
 using System.Text.RegularExpressions;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Basket.Api.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,6 +83,15 @@ builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+
+builder.Services.AddMassTransit(x => {
+    x.AddConsumer<OrderCreatedConsumer>();
+
+    x.UsingRabbitMq((ctx, cfg) => {
+        cfg.Host(builder.Configuration.GetConnectionString("rabbitmq"));
+        cfg.ConfigureEndpoints(ctx);
+    });
+});
 
 builder.Services.AddOpenApi();
 

@@ -1,10 +1,12 @@
+using MassTransit;
 using MediatR;
 using Order.Api.Domain;
 using Order.Api.Infrastructure;
+using ShoesShop.Shared.Events;
 
 namespace Order.Api.Features.Orders.Commands.CreateOrder;
 
-public class CreateOrderHandler(OrderDbContext db) : IRequestHandler<CreateOrderCommand, Guid>
+public class CreateOrderHandler(OrderDbContext db, IPublishEndpoint publishEndpoint) : IRequestHandler<CreateOrderCommand, Guid>
 {
     public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
@@ -33,6 +35,9 @@ public class CreateOrderHandler(OrderDbContext db) : IRequestHandler<CreateOrder
 
         db.Orders.Add(order);
         await db.SaveChangesAsync(cancellationToken);
+
+        await publishEndpoint.Publish(new OrderCreatedEvent(order.Id, order.CustomerId), cancellationToken);
+
         return order.Id;
     }
 }
