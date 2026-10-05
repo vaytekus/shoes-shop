@@ -15,7 +15,8 @@ public static class CreateProductEndpoint
             request.Description,
             request.Price,
             request.ImageUrl,
-            request.StockQuantity);
+            request.StockQuantity,
+            request.CategoryId);
 
         var id = await mediator.Send(command, ct);
         return Results.Created($"/api/products/{id}", id);

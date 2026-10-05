@@ -10,7 +10,8 @@ public static class ProductsModule
 {
     public static IEndpointRouteBuilder MapProducts(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/products").WithTags("Products");
+        var group = app.MapGroup("/api/products")
+            .WithTags("Products");
 
         group.MapGet("/", GetProductsEndpoint.Handle)
             .WithName("GetProducts")

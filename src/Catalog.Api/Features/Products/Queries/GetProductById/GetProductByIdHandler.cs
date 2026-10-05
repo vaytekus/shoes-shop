@@ -10,6 +10,7 @@ public class GetProductByIdHandler(CatalogDbContext db) : IRequestHandler<GetPro
     public async Task<ProductResponse?> Handle(GetProductByIdQuery request, CancellationToken ct)
     {
         return await db.Products
+            .Include(p => p.Category)
             .Where(p => p.Id == request.Id)
             .Select(p => new ProductResponse(
                 p.Id,
@@ -17,7 +18,9 @@ public class GetProductByIdHandler(CatalogDbContext db) : IRequestHandler<GetPro
                 p.Description,
                 p.Price,
                 p.ImageUrl,
-                p.StockQuantity
+                p.StockQuantity,
+                p.CategoryId,
+                p.Category != null ? p.Category.Name : null
             ))
             .FirstOrDefaultAsync(ct);
     }

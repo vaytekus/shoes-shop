@@ -17,8 +17,8 @@ public static class UpdateProductEndpoint
             request.Description,
             request.Price,
             request.ImageUrl,
-            request.StockQuantity
-        );
+            request.StockQuantity,
+            request.CategoryId);
 
         await mediator.Send(command, ct);
         return Results.NoContent();

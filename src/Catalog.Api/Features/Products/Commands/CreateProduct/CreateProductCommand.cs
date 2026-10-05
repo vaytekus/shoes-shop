@@ -7,4 +7,5 @@ public record CreateProductCommand(
     string Description,
     decimal Price,
     string ImageUrl,
-    int StockQuantity) : IRequest<Guid>;
+    int StockQuantity,
+    Guid? CategoryId) : IRequest<Guid>;

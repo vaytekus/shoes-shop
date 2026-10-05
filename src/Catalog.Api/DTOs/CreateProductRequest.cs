@@ -5,4 +5,5 @@ public record CreateProductRequest(
     string Description,
     decimal Price,
     string ImageUrl,
-    int StockQuantity);
+    int StockQuantity,
+    Guid? CategoryId);

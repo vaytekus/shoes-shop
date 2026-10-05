@@ -9,4 +9,5 @@ public record UpdateProductCommand(
     string Description,
     decimal Price,
     string ImageUrl,
-    int StockQuantity) : IRequest;
+    int StockQuantity,
+    Guid? CategoryId) : IRequest;

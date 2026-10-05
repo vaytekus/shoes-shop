@@ -6,10 +6,10 @@ public static class GetProductByIdEndpoint
 {
     public static async Task<IResult> Handle(
         Guid id,
-        IMediator mediator,
+        ISender sender,
         CancellationToken ct)
     {
-        var result = await mediator.Send(new GetProductByIdQuery(id), ct);
+        var result = await sender.Send(new GetProductByIdQuery(id), ct);
 
         return result is null
             ? Results.NotFound()
