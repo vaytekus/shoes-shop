@@ -8,6 +8,8 @@ public class Product
     public decimal Price { get; set; }
     public string ImageUrl { get; set; } = null!;
     public int StockQuantity { get; set; }
+    public Guid? CategoryId { get; set; }
+    public Category? Category { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

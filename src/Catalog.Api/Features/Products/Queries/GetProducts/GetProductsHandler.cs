@@ -10,9 +10,18 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
 {
     public async Task<PagedResult<ProductResponse>> Handle(GetProductsQuery request, CancellationToken ct)
     {
-        var totalCount = await db.Products.CountAsync(ct);
+        var query = db.Products
+            .Include(p => p.Category)
+            .AsQueryable();
 
-        var items = await db.Products
+        if (request.CategoryId.HasValue)
+        {
+            query = query.Where(p => p.CategoryId == request.CategoryId.Value);
+        }
+
+        var totalCount = await query.CountAsync(ct);
+
+        var items = await query
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(p => new ProductResponse(
@@ -21,7 +30,9 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
                 p.Description,
                 p.Price,
                 p.ImageUrl,
-                p.StockQuantity))
+                p.StockQuantity,
+                p.CategoryId,
+                p.Category != null ? p.Category.Name : null))
             .ToListAsync(ct);
 
         return new PagedResult<ProductResponse>(

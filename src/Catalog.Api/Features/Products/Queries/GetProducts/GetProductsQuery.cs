@@ -6,5 +6,6 @@ namespace Catalog.Api.Features.Products.Queries.GetProducts;
 
 public record GetProductsQuery(
     int Page = 1,
-    int PageSize = 10
+    int PageSize = 10,
+    Guid? CategoryId = null
 ) : IRequest<PagedResult<ProductResponse>>;

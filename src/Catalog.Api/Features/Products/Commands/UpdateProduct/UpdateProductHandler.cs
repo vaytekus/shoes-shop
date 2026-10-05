@@ -21,6 +21,7 @@ public class UpdateProductHandler(CatalogDbContext db) : IRequestHandler<UpdateP
         product.Price = request.Price;
         product.ImageUrl = request.ImageUrl;
         product.StockQuantity = request.StockQuantity;
+        product.CategoryId = request.CategoryId;
         product.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync(ct);
     }

@@ -15,6 +15,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger): IEx
         {
             ValidationException => (StatusCodes.Status400BadRequest, "Validation failed"),
             KeyNotFoundException => (StatusCodes.Status404NotFound, "Resource not found"),
+            InvalidOperationException => (StatusCodes.Status409Conflict, "Conflict"),
             _ => (StatusCodes.Status500InternalServerError, "Internal server error")
         };
 
