@@ -5,7 +5,7 @@ public record ProductResponse(
     string Name,
     string Description,
     decimal Price,
-    string ImageUrl,
+    IEnumerable<string> ImageUrls,
     int StockQuantity,
     Guid? CategoryId,
     string? CategoryName);

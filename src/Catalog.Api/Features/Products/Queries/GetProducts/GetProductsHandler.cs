@@ -12,6 +12,7 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
     {
         var query = db.Products
             .Include(p => p.Category)
+            .Include(p => p.Images)
             .AsQueryable();
 
         if (request.CategoryId.HasValue)
@@ -29,7 +30,8 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
                 p.Name,
                 p.Description,
                 p.Price,
-                p.ImageUrl,
+                p.Images.OrderBy(i => i.SortOrder)
+                    .Select(i => i.Url),
                 p.StockQuantity,
                 p.CategoryId,
                 p.Category != null ? p.Category.Name : null))

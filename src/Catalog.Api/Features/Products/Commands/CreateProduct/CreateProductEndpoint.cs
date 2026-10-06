@@ -14,7 +14,6 @@ public static class CreateProductEndpoint
             request.Name,
             request.Description,
             request.Price,
-            request.ImageUrl,
             request.StockQuantity,
             request.CategoryId);
 
