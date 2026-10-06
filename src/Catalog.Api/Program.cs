@@ -64,6 +64,7 @@ builder.Services.AddOpenApi();
 builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
+builder.AddAzureBlobClient("azure-blobs");
 builder.Services.AddScoped<BlobStorageService>();
 builder.Services.AddScoped<UploadProductImagesValidator>();
 

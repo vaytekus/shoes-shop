@@ -1,5 +1,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
+var azureBlobs = builder.AddConnectionString("azure-blobs");
+
 var postgres = builder.AddPostgres("postgres")
     .WithDataVolume()
     .WithPgAdmin();
@@ -8,6 +10,7 @@ var catalogDb = postgres.AddDatabase("catalog-db");
 
 var catalog = builder.AddProject<Projects.Catalog_Api>("catalog")
     .WithReference(catalogDb)
+    .WithReference(azureBlobs)
     .WaitFor(catalogDb);
 
 var redis = builder.AddRedis("redis");
