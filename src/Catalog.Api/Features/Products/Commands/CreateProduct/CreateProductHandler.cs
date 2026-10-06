@@ -14,7 +14,6 @@ public class CreateProductHandler(CatalogDbContext db) : IRequestHandler<CreateP
             Name = request.Name,
             Description = request.Description,
             Price = request.Price,
-            ImageUrl = request.ImageUrl,
             StockQuantity = request.StockQuantity,
             CategoryId = request.CategoryId,
             CreatedAt = DateTime.UtcNow,

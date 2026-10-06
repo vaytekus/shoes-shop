@@ -11,13 +11,15 @@ public class GetProductByIdHandler(CatalogDbContext db) : IRequestHandler<GetPro
     {
         return await db.Products
             .Include(p => p.Category)
+            .Include(p => p.Images)
             .Where(p => p.Id == request.Id)
             .Select(p => new ProductResponse(
                 p.Id,
                 p.Name,
                 p.Description,
                 p.Price,
-                p.ImageUrl,
+                p.Images.OrderBy(i => i.SortOrder)
+                    .Select(i => i.Url),
                 p.StockQuantity,
                 p.CategoryId,
                 p.Category != null ? p.Category.Name : null

@@ -4,6 +4,5 @@ public record CreateProductRequest(
     string Name,
     string Description,
     decimal Price,
-    string ImageUrl,
     int StockQuantity,
     Guid? CategoryId);

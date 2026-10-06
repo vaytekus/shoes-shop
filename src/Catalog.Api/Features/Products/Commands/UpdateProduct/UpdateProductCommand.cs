@@ -8,6 +8,5 @@ public record UpdateProductCommand(
     string Name,
     string Description,
     decimal Price,
-    string ImageUrl,
     int StockQuantity,
     Guid? CategoryId) : IRequest;

@@ -4,6 +4,7 @@ using Catalog.Api.Behaviors;
 using Catalog.Api.Exceptions;
 using Catalog.Api.Features.Categories;
 using Catalog.Api.Features.Products;
+using Catalog.Api.Features.Products.Commands.UploadProductImages;
 using Catalog.Api.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -62,6 +63,9 @@ builder.Services.AddOpenApi();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+builder.Services.AddScoped<BlobStorageService>();
+builder.Services.AddScoped<UploadProductImagesValidator>();
 
 var app = builder.Build();
 
