@@ -7,4 +7,5 @@ public class BasketItem
     public decimal Price { get; set; }
     public int Quantity { get; set; }
     public string ImageUrl { get; set; } = null!;
+    public string CategoryName { get; set; } = string.Empty;
 }
