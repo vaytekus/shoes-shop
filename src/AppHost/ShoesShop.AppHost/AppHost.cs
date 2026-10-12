@@ -39,6 +39,10 @@ var order = builder.AddProject<Projects.Order_Api>("order")
     .WaitFor(orderDb)
     .WaitFor(rabbitmq);
 
+var user = builder.AddProject<Projects.User_Api>("user")
+    .WithReference(keycloak)
+    .WaitFor(keycloak);
+
 var gateway = builder.AddProject<Projects.Gateway>("gateway")
     .WithReference(catalog)
     .WithReference(basket)
