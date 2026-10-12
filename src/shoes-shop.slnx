@@ -6,4 +6,5 @@
   <Project Path="Order.Api/Order.Api.csproj" />
   <Project Path="ServiceDefaults/ShoesShop.ServiceDefaults/ShoesShop.ServiceDefaults.csproj" />
   <Project Path="Shared/ShoesShop.Shared/ShoesShop.Shared.csproj" />
+  <Project Path="User.Api/User.Api.csproj" />
 </Solution>
