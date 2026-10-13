@@ -48,6 +48,7 @@ public class KeycloakAdminService(HttpClient http, IConfiguration config)
             firstName,
             lastName,
             enabled = true,
+            requiredActions = new [] { "VERIFY_EMAIL" },
             credentials = new[]
             {
                 new { type = "password", value = password, temporary = false }
@@ -64,7 +65,14 @@ public class KeycloakAdminService(HttpClient http, IConfiguration config)
             throw new Exception(error);
         }
 
-        return response.Headers.Location!.ToString().Split('/').Last();
+        var userId = response.Headers.Location!.ToString().Split('/').Last();
+
+        var redirectUri = Uri.EscapeDataString("http://localhost:3000/login");
+
+        await http.PutAsync(
+        $"/admin/realms/{_realm}/users/{userId}/send-verify-email?client_id=shoes-shop-client&redirect_uri={redirectUri}",
+        null);
+        return userId;
     }
 
     public async Task VerifyPasswordAsync(string email, string password)

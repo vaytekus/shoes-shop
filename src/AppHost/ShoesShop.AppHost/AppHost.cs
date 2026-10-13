@@ -47,8 +47,10 @@ var gateway = builder.AddProject<Projects.Gateway>("gateway")
     .WithReference(catalog)
     .WithReference(basket)
     .WithReference(order)
+    .WithReference(user)
     .WaitFor(catalog)
     .WaitFor(basket)
-    .WaitFor(order);
+    .WaitFor(order)
+    .WaitFor(user);
 
 builder.Build().Run();
