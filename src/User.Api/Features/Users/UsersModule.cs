@@ -81,6 +81,69 @@ public static class UsersModule
         .WithSummary("DeleteAccount")
         .RequireAuthorization();
 
+        group.MapPost("/login", async (LoginRequest request, KeycloakAdminService keycloak, HttpContext ctx, ILogger<Program> logger) => {
+            try
+            {
+                var (accessToken, refreshToken) = await keycloak.GetTokenAsync(request.Email, request.Password);
+
+                ctx.Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false,
+                    SameSite = SameSiteMode.Lax,
+                    Expires = DateTimeOffset.UtcNow.AddDays(30)
+                });
+
+                return Results.Ok(new {accessToken});
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 403);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                logger.LogError("Login failed: {Message}", ex.Message);
+                return Results.Unauthorized();
+            }
+        })
+        .WithName("Login")
+        .WithSummary("Login");
+
+        group.MapPost("refresh", async (KeycloakAdminService keycloak, HttpContext ctx) => {
+            var refreshToken = ctx.Request.Cookies["refresh_token"];
+
+            if (refreshToken is null)
+            {
+                return Results.Unauthorized();
+            }
+
+            try
+            {
+                var (accessToken, newRefreshToken) = await keycloak.RefreshTokenAsync(refreshToken);
+
+                ctx.Response.Cookies.Append("refresh_token", newRefreshToken, new CookieOptions
+                {
+                    HttpOnly = true, Secure = false, SameSite = SameSiteMode.Lax, Expires = DateTimeOffset.UtcNow.AddDays(30)
+                });
+
+                return Results.Ok(new {accessToken});
+            }
+            catch (UnauthorizedAccessException)
+            {
+                ctx.Response.Cookies.Delete("refresh_token");
+                return Results.Unauthorized();
+            }
+        })
+        .WithTags("Refresh")
+        .WithSummary("Refresh");
+
+        group.MapPost("/logout", (HttpContext ctx) => {
+                ctx.Response.Cookies.Delete("refresh_token");
+                return Results.NoContent();
+            })
+            .WithTags("Logout")
+            .WithSummary("Logout");
+
         return app;
     }
 }

@@ -135,4 +135,52 @@ public class KeycloakAdminService(HttpClient http, IConfiguration config)
         var response = await http.DeleteAsync($"/admin/realms/{_realm}/users/{userId}");
         response.EnsureSuccessStatusCode();
     }
+
+    public async Task<(string AccessToken, string RefreshToken)> GetTokenAsync(string email, string password)
+    {
+        var form = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["grant_type"] = "password", ["client_id"] = "shoes-shop-client", ["username"] = email, ["password"] = password
+        });
+
+        var response = await http.PostAsync($"/realms/{_realm}/protocol/openid-connect/token", form);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            if (error.Contains("Account is not fully set up"))
+            {
+                throw new InvalidOperationException("Please verify your email before signing in");
+            }
+
+            throw new UnauthorizedAccessException($"Invalid credentials: {error}");
+        }
+
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+        return (
+            json.GetProperty("access_token").GetString()!,
+            json.GetProperty("refresh_token").GetString()!
+        );
+    }
+
+    public async Task<(string AccessToken, string RefreshToken)> RefreshTokenAsync(string refreshToken)
+    {
+        var form = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["grant_type"] = "refresh_token", ["client_id"] = "shoes-shop-client", ["refresh_token"] = refreshToken
+        });
+
+        var response = await http.PostAsync($"/realms/{_realm}/protocol/openid-connect/token", form);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new UnauthorizedAccessException("Invalid refresh token");
+        }
+
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+        return (
+            json.GetProperty("access_token").GetString()!,
+            json.GetProperty("refresh_token").GetString()!
+        );
+    }
 }

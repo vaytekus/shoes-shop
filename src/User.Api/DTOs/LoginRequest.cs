@@ -1,3 +1,3 @@
 namespace User.Api.DTOs;
 
-public record LoginRequest();
+public record LoginRequest(string Email, string Password);
