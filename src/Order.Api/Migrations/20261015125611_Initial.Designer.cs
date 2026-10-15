@@ -12,8 +12,8 @@ using Order.Api.Infrastructure;
 namespace Order.Api.Migrations
 {
     [DbContext(typeof(OrderDbContext))]
-    [Migration("20260924160231_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20261015125611_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,63 +29,79 @@ namespace Order.Api.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("customer_id");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.Property<decimal>("TotalAmount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("total_amount");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_orders");
 
-                    b.ToTable("Orders");
+                    b.ToTable("orders", (string)null);
                 });
 
             modelBuilder.Entity("Order.Api.Domain.OrderItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("image_url");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("order_id");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 4)
-                        .HasColumnType("numeric(18,4)");
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("price");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("product_name");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_order_items");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("OrderId")
+                        .HasDatabaseName("ix_order_items_order_id");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("order_items", (string)null);
                 });
 
             modelBuilder.Entity("Order.Api.Domain.CustomerOrder", b =>
@@ -93,30 +109,36 @@ namespace Order.Api.Migrations
                     b.OwnsOne("Order.Api.Domain.ShippingAddress", "ShippingAddress", b1 =>
                         {
                             b1.Property<Guid>("CustomerOrderId")
-                                .HasColumnType("uuid");
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
 
                             b1.Property<string>("City")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("shipping_address_city");
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("shipping_address_country");
 
                             b1.Property<string>("Street")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("shipping_address_street");
 
                             b1.Property<string>("ZipCode")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("shipping_address_zip_code");
 
                             b1.HasKey("CustomerOrderId");
 
-                            b1.ToTable("Orders");
+                            b1.ToTable("orders");
 
                             b1.WithOwner()
-                                .HasForeignKey("CustomerOrderId");
+                                .HasForeignKey("CustomerOrderId")
+                                .HasConstraintName("fk_orders_orders_id");
                         });
 
                     b.Navigation("ShippingAddress")
@@ -129,7 +151,8 @@ namespace Order.Api.Migrations
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_order_items_orders_order_id");
                 });
 
             modelBuilder.Entity("Order.Api.Domain.CustomerOrder", b =>

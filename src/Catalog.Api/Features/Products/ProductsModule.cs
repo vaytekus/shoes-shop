@@ -21,7 +21,7 @@ public static class ProductsModule
         group.MapPost("/", CreateProductEndpoint.Handle)
             .WithName("CreateProduct")
             .WithSummary("CreateProduct")
-            .RequireAuthorization();
+            .RequireAuthorization("AdminOnly");
 
         group.MapGet("/{id:guid}", GetProductByIdEndpoint.Handle)
             .WithName("GetProductById")
@@ -30,18 +30,18 @@ public static class ProductsModule
         group.MapPut("/{id:guid}", UpdateProductEndpoint.Handle)
             .WithName("UpdateProduct")
             .WithSummary("UpdateProduct")
-            .RequireAuthorization();
+            .RequireAuthorization("AdminOnly");
 
         group.MapDelete("/{id:guid}", DeleteProductEndpoint.Handle)
             .WithName("DeleteProduct")
             .WithSummary("DeleteProduct")
-            .RequireAuthorization();
+            .RequireAuthorization("AdminOnly");
 
         group.MapPost("/{id:guid}/images", UploadProductImagesEndpoint.Handle)
             .WithName("UploadProductImages")
             .WithSummary("UploadProductImages")
             .DisableAntiforgery()
-            .RequireAuthorization();
+            .RequireAuthorization("AdminOnly");
 
         return app;
     }

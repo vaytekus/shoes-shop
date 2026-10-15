@@ -34,7 +34,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         if (handler.CanReadToken(token))
                         {
                             var jwt = handler.ReadJwtToken(token);
-                            var identity = new ClaimsIdentity(jwt.Claims, JwtBearerDefaults.AuthenticationScheme);
+                            var claims = new List<Claim>(jwt.Claims);
+                            var realmAccess = jwt.Claims.FirstOrDefault(c => c.Type == "realm_access")?.Value;
+
+                            if (realmAccess is not null)
+                            {
+                                var roles = System.Text.Json.JsonDocument.Parse(realmAccess)
+                                    .RootElement
+                                    .GetProperty("roles")
+                                    .EnumerateArray()
+                                    .Select(x => new Claim(ClaimTypes.Role, x.GetString()!));
+                                claims.AddRange(roles);
+                            }
+
+                            var identity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
                             context.Principal = new ClaimsPrincipal(identity);
                             context.Success();
                         }
@@ -46,7 +59,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options => {
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole("admin"));
+});
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -58,7 +74,10 @@ builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.AddDbContext<OrderDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("order-db")));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("order-db"))
+        .UseSnakeCaseNamingConvention()
+    );
 
 builder.Services.AddMassTransit(x => {
     x.UsingRabbitMq((ctx, cfg) => {

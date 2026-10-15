@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="13.6.0" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.30.0" />
+        <PackageReference Include="EFCore.NamingConventions" Version="10.0.1" />
         <PackageReference Include="FluentValidation" Version="12.1.1" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
         <PackageReference Include="MediatR" Version="14.2.0" />
@@ -26,6 +27,10 @@
     <ItemGroup>
       <ProjectReference Include="..\ServiceDefaults\ShoesShop.ServiceDefaults\ShoesShop.ServiceDefaults.csproj" />
       <ProjectReference Include="..\Shared\ShoesShop.Shared\ShoesShop.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Migrations\" />
     </ItemGroup>
 
 </Project>
