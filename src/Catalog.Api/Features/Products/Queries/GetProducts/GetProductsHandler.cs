@@ -12,7 +12,10 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
     {
         var query = db.Products
             .Include(p => p.Category)
-            .Include(p => p.Images)
+            .Include(p => p.Variants)
+                .ThenInclude(v => v.Images)
+            .Include(p => p.Variants)
+                .ThenInclude(v => v.Sizes)
             .AsQueryable();
 
         if (request.CategoryId.HasValue)
@@ -30,11 +33,31 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
                 p.Name,
                 p.Description,
                 p.Price,
-                p.Images.OrderBy(i => i.SortOrder)
-                    .Select(i => i.Url),
-                p.StockQuantity,
+                p.Brand,
+                p.Sku,
+                p.DiscountPercent,
+                p.IsNew,
+                p.UpperMaterial,
+                p.LiningMaterial,
+                p.InsoleMaterial,
+                p.SoleMaterial,
+                p.Width,
+                p.Season,
+                p.HeelHeight,
+                p.Purpose,
+                p.Style,
+                p.BrandCountry,
+                p.ManufactureCountry,
                 p.CategoryId,
-                p.Category != null ? p.Category.Name : null))
+                p.Category != null ? p.Category.Name : null,
+                p.Variants.Select(v => new ProductVariantResponse(
+                    v.Id,
+                    v.ColorName,
+                    v.ColorHex,
+                    v.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
+                    v.Sizes.Select(s => new ProductSizeResponse(s.Id, s.Size, s.StockQuantity))
+                ))
+            ))
             .ToListAsync(ct);
 
         return new PagedResult<ProductResponse>(

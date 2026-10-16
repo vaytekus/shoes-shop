@@ -9,19 +9,19 @@ public class UploadProductImagesHandler(CatalogDbContext db) : IRequestHandler<U
 {
     public async Task<bool> Handle(UploadProductImagesCommand request, CancellationToken ct)
     {
-        var product = await db.Products
+        var variant = await db.ProductVariants
             .Include(p => p.Images)
-            .FirstOrDefaultAsync(p => p.Id == request.ProductId, ct);
+            .FirstOrDefaultAsync(p => p.Id == request.VariantId, ct);
 
-        if (product is null)
+        if (variant is null)
         {
             return false;
         }
 
-        var nextOrder = product.Images.Count;
+        var nextOrder = variant.Images.Count;
         var images = request.Urls.Select((url, i) => new ProductImage
         {
-            Id = Guid.NewGuid(), ProductId = request.ProductId, Url = url, SortOrder = nextOrder + i
+            Id = Guid.NewGuid(), VariantId = request.VariantId, Url = url, SortOrder = nextOrder + i
         });
 
         db.ProductImages.AddRange(images);

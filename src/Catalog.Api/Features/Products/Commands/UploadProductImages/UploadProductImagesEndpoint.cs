@@ -7,6 +7,7 @@ public static class UploadProductImagesEndpoint
 {
     public static async Task<IResult> Handle(
         Guid id,
+        Guid variantId,
         IFormFileCollection files,
         BlobStorageService blobService,
         UploadProductImagesValidator validator,
@@ -20,7 +21,7 @@ public static class UploadProductImagesEndpoint
         }
 
         var url = await Task.WhenAll(files.Select(f => blobService.UploadAsync(f, ct)));
-        var success = await sender.Send(new UploadProductImagesCommand(id, url), ct);
+        var success = await sender.Send(new UploadProductImagesCommand(variantId, url), ct);
 
         if (!success)
         {

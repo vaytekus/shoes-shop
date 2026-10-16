@@ -11,11 +11,25 @@ public static class CreateProductEndpoint
         CancellationToken ct)
     {
         var command = new CreateProductCommand(
-            request.Name,
-            request.Description,
-            request.Price,
-            request.StockQuantity,
-            request.CategoryId);
+        request.Name,
+        request.Description,
+        request.Price,
+        request.Brand,
+        request.Sku,
+        request.DiscountPercent,
+        request.IsNew,
+        request.UpperMaterial,
+        request.LiningMaterial,
+        request.InsoleMaterial,
+        request.SoleMaterial,
+        request.Width,
+        request.Season,
+        request.HeelHeight,
+        request.Purpose,
+        request.Style,
+        request.BrandCountry,
+        request.ManufactureCountry,
+        request.CategoryId);
 
         var id = await mediator.Send(command, ct);
         return Results.Created($"/api/products/{id}", id);

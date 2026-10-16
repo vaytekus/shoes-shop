@@ -19,9 +19,24 @@ public class UpdateProductHandler(CatalogDbContext db) : IRequestHandler<UpdateP
         product.Name = request.Name;
         product.Description = request.Description;
         product.Price = request.Price;
-        product.StockQuantity = request.StockQuantity;
+        product.Brand = request.Brand;
+        product.Sku = request.Sku;
+        product.DiscountPercent = request.DiscountPercent;
+        product.IsNew = request.IsNew;
+        product.UpperMaterial = request.UpperMaterial;
+        product.LiningMaterial = request.LiningMaterial;
+        product.InsoleMaterial = request.InsoleMaterial;
+        product.SoleMaterial = request.SoleMaterial;
+        product.Width = request.Width;
+        product.Season = request.Season;
+        product.HeelHeight = request.HeelHeight;
+        product.Purpose = request.Purpose;
+        product.Style = request.Style;
+        product.BrandCountry = request.BrandCountry;
+        product.ManufactureCountry = request.ManufactureCountry;
         product.CategoryId = request.CategoryId;
         product.UpdatedAt = DateTime.UtcNow;
+
         await db.SaveChangesAsync(ct);
     }
 }

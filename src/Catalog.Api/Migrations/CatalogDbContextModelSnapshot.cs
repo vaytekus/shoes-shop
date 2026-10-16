@@ -47,6 +47,14 @@ namespace Catalog.Api.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("Brand")
+                        .HasColumnType("text")
+                        .HasColumnName("brand");
+
+                    b.Property<string>("BrandCountry")
+                        .HasColumnType("text")
+                        .HasColumnName("brand_country");
+
                     b.Property<Guid?>("CategoryId")
                         .HasColumnType("uuid")
                         .HasColumnName("category_id");
@@ -60,6 +68,30 @@ namespace Catalog.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<int?>("DiscountPercent")
+                        .HasColumnType("integer")
+                        .HasColumnName("discount_percent");
+
+                    b.Property<string>("HeelHeight")
+                        .HasColumnType("text")
+                        .HasColumnName("heel_height");
+
+                    b.Property<string>("InsoleMaterial")
+                        .HasColumnType("text")
+                        .HasColumnName("insole_material");
+
+                    b.Property<bool>("IsNew")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_new");
+
+                    b.Property<string>("LiningMaterial")
+                        .HasColumnType("text")
+                        .HasColumnName("lining_material");
+
+                    b.Property<string>("ManufactureCountry")
+                        .HasColumnType("text")
+                        .HasColumnName("manufacture_country");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -69,13 +101,37 @@ namespace Catalog.Api.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("price");
 
-                    b.Property<int>("StockQuantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("stock_quantity");
+                    b.Property<string>("Purpose")
+                        .HasColumnType("text")
+                        .HasColumnName("purpose");
+
+                    b.Property<string>("Season")
+                        .HasColumnType("text")
+                        .HasColumnName("season");
+
+                    b.Property<string>("Sku")
+                        .HasColumnType("text")
+                        .HasColumnName("sku");
+
+                    b.Property<string>("SoleMaterial")
+                        .HasColumnType("text")
+                        .HasColumnName("sole_material");
+
+                    b.Property<string>("Style")
+                        .HasColumnType("text")
+                        .HasColumnName("style");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<string>("UpperMaterial")
+                        .HasColumnType("text")
+                        .HasColumnName("upper_material");
+
+                    b.Property<string>("Width")
+                        .HasColumnType("text")
+                        .HasColumnName("width");
 
                     b.HasKey("Id")
                         .HasName("pk_products");
@@ -93,10 +149,6 @@ namespace Catalog.Api.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("product_id");
-
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer")
                         .HasColumnName("sort_order");
@@ -106,13 +158,75 @@ namespace Catalog.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("url");
 
+                    b.Property<Guid>("VariantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("variant_id");
+
                     b.HasKey("Id")
                         .HasName("pk_product_images");
 
-                    b.HasIndex("ProductId")
-                        .HasDatabaseName("ix_product_images_product_id");
+                    b.HasIndex("VariantId")
+                        .HasDatabaseName("ix_product_images_variant_id");
 
                     b.ToTable("product_images", (string)null);
+                });
+
+            modelBuilder.Entity("Catalog.Api.Domain.ProductSize", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("size");
+
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("stock_quantity");
+
+                    b.Property<Guid>("VariantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("variant_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_product_sizes");
+
+                    b.HasIndex("VariantId")
+                        .HasDatabaseName("ix_product_sizes_variant_id");
+
+                    b.ToTable("product_sizes", (string)null);
+                });
+
+            modelBuilder.Entity("Catalog.Api.Domain.ProductVariant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ColorHex")
+                        .HasColumnType("text")
+                        .HasColumnName("color_hex");
+
+                    b.Property<string>("ColorName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("color_name");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_product_variants");
+
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("ix_product_variants_product_id");
+
+                    b.ToTable("product_variants", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.Api.Domain.Product", b =>
@@ -127,12 +241,36 @@ namespace Catalog.Api.Migrations
 
             modelBuilder.Entity("Catalog.Api.Domain.ProductImage", b =>
                 {
-                    b.HasOne("Catalog.Api.Domain.Product", "Product")
+                    b.HasOne("Catalog.Api.Domain.ProductVariant", "Variant")
                         .WithMany("Images")
+                        .HasForeignKey("VariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_product_images_product_variants_variant_id");
+
+                    b.Navigation("Variant");
+                });
+
+            modelBuilder.Entity("Catalog.Api.Domain.ProductSize", b =>
+                {
+                    b.HasOne("Catalog.Api.Domain.ProductVariant", "Variant")
+                        .WithMany("Sizes")
+                        .HasForeignKey("VariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_product_sizes_product_variants_variant_id");
+
+                    b.Navigation("Variant");
+                });
+
+            modelBuilder.Entity("Catalog.Api.Domain.ProductVariant", b =>
+                {
+                    b.HasOne("Catalog.Api.Domain.Product", "Product")
+                        .WithMany("Variants")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_product_images_products_product_id");
+                        .HasConstraintName("fk_product_variants_products_product_id");
 
                     b.Navigation("Product");
                 });
@@ -144,7 +282,14 @@ namespace Catalog.Api.Migrations
 
             modelBuilder.Entity("Catalog.Api.Domain.Product", b =>
                 {
+                    b.Navigation("Variants");
+                });
+
+            modelBuilder.Entity("Catalog.Api.Domain.ProductVariant", b =>
+                {
                     b.Navigation("Images");
+
+                    b.Navigation("Sizes");
                 });
 #pragma warning restore 612, 618
         }

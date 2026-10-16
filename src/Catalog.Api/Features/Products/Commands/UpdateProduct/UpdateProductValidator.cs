@@ -17,7 +17,8 @@ public class UpdateProductValidator : AbstractValidator<UpdateProductCommand>
         RuleFor(c => c.Price)
             .GreaterThan(0);
 
-        RuleFor(c => c.StockQuantity)
-            .GreaterThanOrEqualTo(0);
+        RuleFor(c => c.DiscountPercent)
+            .InclusiveBetween(0, 100)
+            .When(c => c.DiscountPercent.HasValue);
     }
 }

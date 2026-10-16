@@ -1,6 +1,12 @@
+using Catalog.Api.Features.Products.Commands.AddSize;
 using Catalog.Api.Features.Products.Commands.CreateProduct;
+using Catalog.Api.Features.Products.Commands.CreateVariant;
 using Catalog.Api.Features.Products.Commands.DeleteProduct;
+using Catalog.Api.Features.Products.Commands.DeleteSize;
+using Catalog.Api.Features.Products.Commands.DeleteVariant;
 using Catalog.Api.Features.Products.Commands.UpdateProduct;
+using Catalog.Api.Features.Products.Commands.UpdateSize;
+using Catalog.Api.Features.Products.Commands.UpdateVariant;
 using Catalog.Api.Features.Products.Commands.UploadProductImages;
 using Catalog.Api.Features.Products.Queries.GetProductById;
 using Catalog.Api.Features.Products.Queries.GetProducts;
@@ -37,10 +43,42 @@ public static class ProductsModule
             .WithSummary("DeleteProduct")
             .RequireAuthorization("AdminOnly");
 
-        group.MapPost("/{id:guid}/images", UploadProductImagesEndpoint.Handle)
-            .WithName("UploadProductImages")
-            .WithSummary("UploadProductImages")
+        // Варіанти (колір)
+        group.MapPost("/{id:guid}/variants", CreateVariantEndpoint.Handle)
+            .WithName("CreateVariant")
+            .WithSummary("CreateVariant")
+            .RequireAuthorization("AdminOnly");
+
+        group.MapPut("/{id:guid}/variants/{variantId:guid}", UpdateVariantEndpoint.Handle)
+            .WithName("UpdateVariant")
+            .WithSummary("UpdateVariant")
+            .RequireAuthorization("AdminOnly");
+
+        group.MapDelete("/{id:guid}/variants/{variantId:guid}", DeleteVariantEndpoint.Handle)
+            .WithName("DeleteVariant")
+            .WithSummary("DeleteVariant")
+            .RequireAuthorization("AdminOnly");
+
+        group.MapPost("/{id:guid}/variants/{variantId:guid}/images", UploadProductImagesEndpoint.Handle)
+            .WithName("UploadVariantImages")
+            .WithSummary("UploadVariantImages")
             .DisableAntiforgery()
+            .RequireAuthorization("AdminOnly");
+
+        // Розміри варіанту
+        group.MapPost("/{id:guid}/variants/{variantId:guid}/sizes", AddSizeEndpoint.Handle)
+            .WithName("AddSize")
+            .WithSummary("AddSize")
+            .RequireAuthorization("AdminOnly");
+
+        group.MapPut("/{id:guid}/variants/{variantId:guid}/sizes/{sizeId:guid}", UpdateSizeEndpoint.Handle)
+            .WithName("UpdateSize")
+            .WithSummary("UpdateSize")
+            .RequireAuthorization("AdminOnly");
+
+        group.MapDelete("/{id:guid}/variants/{variantId:guid}/sizes/{sizeId:guid}", DeleteSizeEndpoint.Handle)
+            .WithName("DeleteSize")
+            .WithSummary("DeleteSize")
             .RequireAuthorization("AdminOnly");
 
         return app;
