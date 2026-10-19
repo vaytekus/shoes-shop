@@ -12,7 +12,7 @@ public static class UpdateVariantEndpoint
         IMediator mediator,
         CancellationToken ct)
     {
-        await mediator.Send(new UpdateVariantCommand(variantId, request.ColorName, request.ColorHex), ct);
+        await mediator.Send(new UpdateVariantCommand(variantId, request.Name, request.Sku, request.ColorName, request.ColorHex), ct);
         return Results.NoContent();
     }
 }

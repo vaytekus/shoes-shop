@@ -14,6 +14,8 @@ public class UpdateVariantHandler(CatalogDbContext db) : IRequestHandler<UpdateV
         if (variant is null)
             throw new KeyNotFoundException($"Variant {request.VariantId} not found");
 
+        variant.Name = request.Name;
+        variant.Sku = request.Sku;
         variant.ColorName = request.ColorName;
         variant.ColorHex = request.ColorHex;
         await db.SaveChangesAsync(ct);

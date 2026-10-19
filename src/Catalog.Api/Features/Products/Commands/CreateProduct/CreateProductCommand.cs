@@ -7,6 +7,7 @@ public record CreateProductCommand(
     string Description,
     decimal Price,
     string? Brand,
+    string? Gender,
     string? Sku,
     int? DiscountPercent,
     bool IsNew,

@@ -1,5 +1,7 @@
 namespace Catalog.Api.DTOs;
 
 public record CreateVariantRequest(
-    string ColorName,
+    string Name,
+    string? Sku,
+    string? ColorName,
     string? ColorHex);

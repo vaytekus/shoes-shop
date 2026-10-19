@@ -22,6 +22,7 @@ public class GetProductByIdHandler(CatalogDbContext db) : IRequestHandler<GetPro
                 p.Description,
                 p.Price,
                 p.Brand,
+                p.Gender,
                 p.Sku,
                 p.DiscountPercent,
                 p.IsNew,
@@ -40,6 +41,8 @@ public class GetProductByIdHandler(CatalogDbContext db) : IRequestHandler<GetPro
                 p.Category != null ? p.Category.Name : null,
                 p.Variants.Select(v => new ProductVariantResponse(
                     v.Id,
+                    v.Name,
+                    v.Sku,
                     v.ColorName,
                     v.ColorHex,
                     v.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),

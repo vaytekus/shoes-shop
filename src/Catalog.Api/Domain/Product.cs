@@ -10,6 +10,7 @@ public class Product
     // Base attributes
     public string? Brand { get; set; }
     public string? Sku { get; set; }
+    public string Gender { get; set; }
     public int? DiscountPercent { get; set; }
     public bool IsNew { get; set; }
 

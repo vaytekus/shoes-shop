@@ -9,9 +9,11 @@ public static class GetProductsEndpoint
         CancellationToken ct,
         int page = 1,
         int pageSize = 10,
-        Guid? categoryId = null)
+        Guid? categoryId = null,
+        string? gender = null,
+        bool? hasDiscount = null)
     {
-        var result = await sender.Send(new GetProductsQuery(page, pageSize, categoryId), ct);
+        var result = await sender.Send(new GetProductsQuery(page, pageSize, categoryId, gender, hasDiscount), ct);
         return Results.Ok(result);
     }
 }

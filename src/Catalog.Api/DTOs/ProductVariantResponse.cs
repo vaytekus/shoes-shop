@@ -2,7 +2,9 @@ namespace Catalog.Api.DTOs;
 
 public record ProductVariantResponse(
     Guid Id,
-    string ColorName,
+    string Name,
+    string? Sku,
+    string? ColorName,
     string? ColorHex,
     IEnumerable<string> ImageUrls,
     IEnumerable<ProductSizeResponse> Sizes);

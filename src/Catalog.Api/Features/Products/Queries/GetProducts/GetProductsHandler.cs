@@ -23,6 +23,16 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
             query = query.Where(p => p.CategoryId == request.CategoryId.Value);
         }
 
+        if (request.Gender is not null)
+        {
+            query = query.Where(p => p.Gender == request.Gender);
+        }
+
+        if (request.HasDiscount is not null)
+        {
+            query = query.Where(p => p.DiscountPercent > 0);
+        }
+
         var totalCount = await query.CountAsync(ct);
 
         var items = await query
@@ -34,6 +44,7 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
                 p.Description,
                 p.Price,
                 p.Brand,
+                p.Gender,
                 p.Sku,
                 p.DiscountPercent,
                 p.IsNew,
@@ -52,6 +63,8 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
                 p.Category != null ? p.Category.Name : null,
                 p.Variants.Select(v => new ProductVariantResponse(
                     v.Id,
+                    v.Name,
+                    v.Sku,
                     v.ColorName,
                     v.ColorHex,
                     v.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),

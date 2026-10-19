@@ -15,6 +15,7 @@ public static class CreateProductEndpoint
         request.Description,
         request.Price,
         request.Brand,
+        request.Gender,
         request.Sku,
         request.DiscountPercent,
         request.IsNew,

@@ -6,7 +6,7 @@ public class CreateVariantValidator : AbstractValidator<CreateVariantCommand>
 {
     public CreateVariantValidator()
     {
-        RuleFor(v => v.ColorName)
+        RuleFor(v => v.Name)
             .NotEmpty()
             .MaximumLength(100);
 

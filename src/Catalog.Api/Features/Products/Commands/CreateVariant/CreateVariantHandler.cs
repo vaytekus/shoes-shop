@@ -18,7 +18,7 @@ public class CreateVariantHandler(CatalogDbContext db) : IRequestHandler<CreateV
 
         var variant = new ProductVariant
         {
-            Id = Guid.NewGuid(), ProductId = request.ProductId, ColorName = request.ColorName, ColorHex = request.ColorHex,
+            Id = Guid.NewGuid(), ProductId = request.ProductId, Name = request.Name, Sku = request.Sku, ColorName = request.ColorName, ColorHex = request.ColorHex,
         };
 
         db.ProductVariants.Add(variant);

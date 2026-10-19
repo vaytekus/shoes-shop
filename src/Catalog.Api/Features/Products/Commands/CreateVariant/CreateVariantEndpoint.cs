@@ -11,7 +11,7 @@ public static class CreateVariantEndpoint
         IMediator mediator,
         CancellationToken ct)
     {
-        var variantId = await mediator.Send(new CreateVariantCommand(id, request.ColorName, request.ColorHex), ct);
+        var variantId = await mediator.Send(new CreateVariantCommand(id, request.Name, request.Sku, request.ColorName, request.ColorHex), ct);
 
         return Results.Created($"/api/products/{id}/variants/{variantId}", variantId);
     }
