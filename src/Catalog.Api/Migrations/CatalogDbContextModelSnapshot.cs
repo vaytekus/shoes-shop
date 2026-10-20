@@ -217,7 +217,6 @@ namespace Catalog.Api.Migrations
                         .HasColumnName("color_hex");
 
                     b.Property<string>("ColorName")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("color_name");
 

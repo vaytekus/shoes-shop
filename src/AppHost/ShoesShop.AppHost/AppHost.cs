@@ -4,7 +4,7 @@ var azureBlobs = builder.AddConnectionString("azure-blobs");
 
 var postgres = builder.AddPostgres("postgres")
     .WithDataVolume()
-    .WithPgAdmin();
+    .WithPgAdmin(c => c.WithHostPort(5050));
 
 var catalogDb = postgres.AddDatabase("catalog-db");
 
@@ -13,7 +13,9 @@ var catalog = builder.AddProject<Projects.Catalog_Api>("catalog")
     .WithReference(azureBlobs)
     .WaitFor(catalogDb);
 
-var redis = builder.AddRedis("redis");
+var redis = builder.AddRedis("redis")
+    .WithDataVolume()
+    .WithHostPort(6379);
 
 var keycloak = builder.AddKeycloak("keycloak", port: 8080)
     .WithDataVolume()

@@ -11,7 +11,7 @@ public class ProductVariant()
     public string? Sku { get; set; }
 
     // Color options
-    public string ColorName { get; set; } = null!;
+    public string? ColorName { get; set; }
     public string? ColorHex { get; set; }
 
     // Photos and sizes

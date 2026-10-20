@@ -9,6 +9,10 @@ public static class UploadProductImagesEndpoint
         Guid id,
         Guid variantId,
         IFormFileCollection files,
+        string? gender,
+        string? category,
+        string? brand,
+        string? modelName,
         BlobStorageService blobService,
         UploadProductImagesValidator validator,
         ISender sender,
@@ -20,7 +24,12 @@ public static class UploadProductImagesEndpoint
             return Results.BadRequest(error);
         }
 
-        var url = await Task.WhenAll(files.Select(f => blobService.UploadAsync(f, ct)));
+        var url = await Task.WhenAll(files.Select(f => blobService.UploadAsync(f,
+            gender ?? "other",
+            category ?? "other",
+            brand ?? "unknown",
+            modelName ?? id.ToString(),
+            ct)));
         var success = await sender.Send(new UploadProductImagesCommand(variantId, url), ct);
 
         if (!success)
