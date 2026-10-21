@@ -11,7 +11,7 @@ public static class UpdateCategoryEndpoint
         IMediator mediator,
         CancellationToken ct)
     {
-        await mediator.Send(new UpdateCategoryCommand(id, request.Name), ct);
+        await mediator.Send(new UpdateCategoryCommand(id, request.Name, request.Section), ct);
         return Results.NoContent();
     }
 }

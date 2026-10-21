@@ -23,9 +23,9 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
             query = query.Where(p => p.CategoryId == request.CategoryId.Value);
         }
 
-        if (request.Gender is not null)
+        if (request.Section is not null)
         {
-            query = query.Where(p => p.Gender == request.Gender);
+            query = query.Where(p => p.Section == request.Section);
         }
 
         if (request.HasDiscount is not null)
@@ -44,7 +44,7 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
                 p.Description,
                 p.Price,
                 p.Brand,
-                p.Gender,
+                p.Section,
                 p.Sku,
                 p.DiscountPercent,
                 p.IsNew,

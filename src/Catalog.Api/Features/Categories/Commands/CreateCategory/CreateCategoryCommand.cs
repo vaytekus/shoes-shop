@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Catalog.Api.Features.Categories.Commands.CreateCategory;
 
-public record CreateCategoryCommand(string Name) : IRequest<CategoryResponse>;
+public record CreateCategoryCommand(string Name, string? Section) : IRequest<CategoryResponse>;

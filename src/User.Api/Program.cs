@@ -38,7 +38,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options => {
+    options.AddPolicy("admin", policy => {
+        policy.RequireAssertion(ctx => {
+            var realmAccess = ctx.User.FindFirst("realm_access")?.Value;
+            if (realmAccess is null) return false;
+            return realmAccess.Contains("\"admin\"");
+        });
+    });
+});
 
 var keycloakUrl = builder.Configuration["services__keycloak__http__0"]
     ?? builder.Configuration["Keycloak:BaseUrl"]!;

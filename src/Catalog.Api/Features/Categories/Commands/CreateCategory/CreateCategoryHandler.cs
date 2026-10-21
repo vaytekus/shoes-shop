@@ -16,9 +16,9 @@ public class CreateCategoryHandler(CatalogDbContext db): IRequestHandler<CreateC
             throw new InvalidOperationException($"Category '{request.Name}' already exists");
         }
 
-        var category = new Category{ Id = Guid.NewGuid(), Name = request.Name };
+        var category = new Category{ Id = Guid.NewGuid(), Name = request.Name, Section = request.Section };
         db.Categories.Add(category);
         await db.SaveChangesAsync(ct);
-        return new CategoryResponse(category.Id, category.Name);
+        return new CategoryResponse(category.Id, category.Name, category.Section);
     }
 }

@@ -9,7 +9,7 @@ public static class UploadProductImagesEndpoint
         Guid id,
         Guid variantId,
         IFormFileCollection files,
-        string? gender,
+        string? section,
         string? category,
         string? brand,
         string? modelName,
@@ -25,7 +25,7 @@ public static class UploadProductImagesEndpoint
         }
 
         var url = await Task.WhenAll(files.Select(f => blobService.UploadAsync(f,
-            gender ?? "other",
+            section ?? "other",
             category ?? "other",
             brand ?? "unknown",
             modelName ?? id.ToString(),

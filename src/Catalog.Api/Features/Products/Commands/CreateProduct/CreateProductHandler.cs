@@ -15,7 +15,7 @@ public class CreateProductHandler(CatalogDbContext db) : IRequestHandler<CreateP
             Description = request.Description,
             Price = request.Price,
             Brand = request.Brand,
-            Gender = request.Gender,
+            Section = request.Section,
             Sku = request.Sku,
             DiscountPercent = request.DiscountPercent,
             IsNew = request.IsNew,

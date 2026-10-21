@@ -20,7 +20,7 @@ public class UpdateProductHandler(CatalogDbContext db) : IRequestHandler<UpdateP
         product.Description = request.Description;
         product.Price = request.Price;
         product.Brand = request.Brand;
-        product.Gender = request.Gender;
+        product.Section = request.Section;
         product.Sku = request.Sku;
         product.DiscountPercent = request.DiscountPercent;
         product.IsNew = request.IsNew;

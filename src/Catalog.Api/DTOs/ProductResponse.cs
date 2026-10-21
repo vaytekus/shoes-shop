@@ -6,7 +6,7 @@ public record ProductResponse(
     string Description,
     decimal Price,
     string? Brand,
-    string? Gender,
+    string? Section,
     string? Sku,
     int? DiscountPercent,
     bool IsNew,

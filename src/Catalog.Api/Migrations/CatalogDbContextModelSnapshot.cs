@@ -34,6 +34,10 @@ namespace Catalog.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
+                    b.Property<string>("Section")
+                        .HasColumnType("text")
+                        .HasColumnName("section");
+
                     b.HasKey("Id")
                         .HasName("pk_categories");
 
@@ -72,11 +76,6 @@ namespace Catalog.Api.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("discount_percent");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("gender");
-
                     b.Property<string>("HeelHeight")
                         .HasColumnType("text")
                         .HasColumnName("heel_height");
@@ -113,6 +112,10 @@ namespace Catalog.Api.Migrations
                     b.Property<string>("Season")
                         .HasColumnType("text")
                         .HasColumnName("season");
+
+                    b.Property<string>("Section")
+                        .HasColumnType("text")
+                        .HasColumnName("section");
 
                     b.Property<string>("Sku")
                         .HasColumnType("text")

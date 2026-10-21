@@ -10,7 +10,7 @@ public class BlobStorageService(BlobServiceClient blobServiceClient, IConfigurat
 
     public async Task<string> UploadAsync(
         IFormFile file,
-        string gender,
+        string section,
         string category,
         string brand,
         string modelName,
@@ -18,7 +18,7 @@ public class BlobStorageService(BlobServiceClient blobServiceClient, IConfigurat
     {
         var container = blobServiceClient.GetBlobContainerClient(_containerName);
         var now = DateTime.UtcNow;
-        var blobName = $"{now:yyyy}/{now:MM}/{Slugify(gender)}/{Slugify(category)}/{Slugify(brand)}-{Slugify(modelName)}/{Guid.NewGuid
+        var blobName = $"{now:yyyy}/{now:MM}/{Slugify(section)}/{Slugify(category)}/{Slugify(brand)}-{Slugify(modelName)}/{Guid.NewGuid
             ()}{Path.GetExtension(file.FileName)}";
         var blob = container.GetBlobClient(blobName);
 

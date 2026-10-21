@@ -11,6 +11,24 @@ public static class UsersModule
         var group = app.MapGroup("/api/users")
             .WithTags("Users");
 
+        group.MapGet("/", async (
+            KeycloakAdminService keycloak,
+            ClaimsPrincipal user,
+            int page = 1,
+            int pageSize = 20,
+            string? search = null) =>
+        {
+            var realmAccess = user.FindFirst("realm_access")?.Value;
+            if (realmAccess is null || !realmAccess.Contains("\"admin\"")) return Results.Forbid();
+            var first = (page - 1) * pageSize;
+            var items = await keycloak.GetUsersAsync(first, pageSize, search);
+            var total = await keycloak.GetUsersCountAsync(search);
+            return Results.Ok(new { items, totalCount = total, page, pageSize });
+        })
+        .WithName("GetUsers")
+        .WithSummary("GetUsers")
+        .RequireAuthorization();
+
         group.MapPost("/register", async (RegisterRequest request, KeycloakAdminService keycloak) => {
             try
             {

@@ -136,6 +136,28 @@ public class KeycloakAdminService(HttpClient http, IConfiguration config)
         response.EnsureSuccessStatusCode();
     }
 
+    public async Task<JsonElement> GetUsersAsync(int first = 0, int max = 50, string? search = null)
+    {
+        await SetAuthHeaderAsync();
+
+        var query = $"?first={first}&max={max}";
+        if (!string.IsNullOrEmpty(search)) query += $"&search={Uri.EscapeDataString(search)}";
+
+        var response = await http.GetAsync($"/admin/realms/{_realm}/users{query}");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<JsonElement>();
+    }
+
+    public async Task<int> GetUsersCountAsync(string? search = null)
+    {
+        await SetAuthHeaderAsync();
+
+        var query = search is not null ? $"?search={Uri.EscapeDataString(search)}" : "";
+        var response = await http.GetAsync($"/admin/realms/{_realm}/users/count{query}");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<int>();
+    }
+
     public async Task<(string AccessToken, string RefreshToken)> GetTokenAsync(string email, string password)
     {
         var form = new FormUrlEncodedContent(new Dictionary<string, string>
@@ -183,4 +205,5 @@ public class KeycloakAdminService(HttpClient http, IConfiguration config)
             json.GetProperty("refresh_token").GetString()!
         );
     }
+
 }

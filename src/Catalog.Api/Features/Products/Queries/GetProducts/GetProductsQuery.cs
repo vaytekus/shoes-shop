@@ -8,6 +8,6 @@ public record GetProductsQuery(
     int Page = 1,
     int PageSize = 10,
     Guid? CategoryId = null,
-    string? Gender = null,
+    string? Section = null,
     bool? HasDiscount = null
 ) : IRequest<PagedResult<ProductResponse>>;

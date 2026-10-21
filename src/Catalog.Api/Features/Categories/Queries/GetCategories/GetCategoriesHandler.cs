@@ -10,7 +10,7 @@ public class GetCategoriesHandler(CatalogDbContext db) : IRequestHandler<GetCate
     public async Task<List<CategoryResponse>> Handle(GetCategoriesQuery request, CancellationToken ct)
     {
         return await db.Categories
-            .Select(c => new CategoryResponse(c.Id, c.Name))
+            .Select(c => new CategoryResponse(c.Id, c.Name, c.Section))
             .ToListAsync(ct);
     }
 }

@@ -22,7 +22,7 @@ public class GetProductByIdHandler(CatalogDbContext db) : IRequestHandler<GetPro
                 p.Description,
                 p.Price,
                 p.Brand,
-                p.Gender,
+                p.Section,
                 p.Sku,
                 p.DiscountPercent,
                 p.IsNew,

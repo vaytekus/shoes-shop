@@ -16,6 +16,7 @@ public class UpdateCategoryHandler(CatalogDbContext db) : IRequestHandler<Update
         }
 
         category.Name = request.Name;
+        category.Section = request.Section;
         await db.SaveChangesAsync(ct);
     }
 }
