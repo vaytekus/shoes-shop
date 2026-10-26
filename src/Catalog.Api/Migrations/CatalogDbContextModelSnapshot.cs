@@ -236,6 +236,10 @@ namespace Catalog.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("sku");
 
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
                     b.HasKey("Id")
                         .HasName("pk_product_variants");
 

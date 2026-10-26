@@ -156,11 +156,25 @@ public static class UsersModule
         .WithSummary("Refresh");
 
         group.MapPost("/logout", (HttpContext ctx) => {
-                ctx.Response.Cookies.Delete("refresh_token");
-                return Results.NoContent();
-            })
-            .WithTags("Logout")
-            .WithSummary("Logout");
+            ctx.Response.Cookies.Delete("refresh_token");
+            return Results.NoContent();
+        })
+        .WithTags("Logout")
+        .WithSummary("Logout");
+
+        group.MapGet("/{id}", async (string id, KeycloakAdminService keycloak, ClaimsPrincipal user) => {
+            var realmAccess = user.FindFirst("realm_access")?.Value;
+            if (realmAccess is null || !realmAccess.Contains("\"admin\""))
+            {
+                return Results.Forbid();
+            }
+
+            var result = await keycloak.GetUserByIdAsync(id);
+            return Results.Ok(result);
+        })
+        .WithTags("GetUserById")
+        .WithSummary("GetUserById")
+        .RequireAuthorization();
 
         return app;
     }

@@ -1,9 +1,12 @@
 using Catalog.Api.Features.Products.Commands.AddSize;
 using Catalog.Api.Features.Products.Commands.CreateProduct;
 using Catalog.Api.Features.Products.Commands.CreateVariant;
+using Catalog.Api.Features.Products.Commands.DeleteImage;
 using Catalog.Api.Features.Products.Commands.DeleteProduct;
 using Catalog.Api.Features.Products.Commands.DeleteSize;
 using Catalog.Api.Features.Products.Commands.DeleteVariant;
+using Catalog.Api.Features.Products.Commands.ReorderImages;
+using Catalog.Api.Features.Products.Commands.ReorderVariants;
 using Catalog.Api.Features.Products.Commands.UpdateProduct;
 using Catalog.Api.Features.Products.Commands.UpdateSize;
 using Catalog.Api.Features.Products.Commands.UpdateVariant;
@@ -65,7 +68,6 @@ public static class ProductsModule
             .DisableAntiforgery()
             .RequireAuthorization("AdminOnly");
 
-        // Розміри варіанту
         group.MapPost("/{id:guid}/variants/{variantId:guid}/sizes", AddSizeEndpoint.Handle)
             .WithName("AddSize")
             .WithSummary("AddSize")
@@ -79,6 +81,19 @@ public static class ProductsModule
         group.MapDelete("/{id:guid}/variants/{variantId:guid}/sizes/{sizeId:guid}", DeleteSizeEndpoint.Handle)
             .WithName("DeleteSize")
             .WithSummary("DeleteSize")
+            .RequireAuthorization("AdminOnly");
+
+        group.MapPut("/{id:guid}/variants/{variantId:guid}/images/reorder", ReorderImagesEndpoint.Handle)
+            .WithName("ReorderImages")
+            .WithSummary("ReorderImages");
+
+        group.MapDelete("/{id:guid}/variants/{variantId:guid}/images", DeleteImageEndpoint.Handle)
+            .WithName("DeleteVariantImages")
+            .WithSummary("DeleteVariantImages");
+
+        group.MapPut("/{id:guid}/variants/reorder", ReorderVariantsEndpoint.Handle)
+            .WithName("ReorderVariants")
+            .WithSummary("ReorderVariants")
             .RequireAuthorization("AdminOnly");
 
         return app;

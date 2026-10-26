@@ -30,6 +30,15 @@ public class BlobStorageService(BlobServiceClient blobServiceClient, IConfigurat
         return blob.Uri.ToString();
     }
 
+    public async Task DeleteAsync(string url, CancellationToken ct = default)
+    {
+        var containerName = configuration["AzureStorage:ContainerName"]!;
+        var container = blobServiceClient.GetBlobContainerClient(containerName);
+        var uri = new Uri(url);
+        var blobName = uri.AbsolutePath.TrimStart('/').Substring(containerName.Length + 1);
+        await container.GetBlobClient(blobName).DeleteIfExistsAsync(cancellationToken: ct);
+    }
+
     private static string Slugify(string value)
     {
         return Regex.Replace(value.ToLowerInvariant().Trim(), @"[^a-z0-9]+", "-").Trim('-');

@@ -206,4 +206,13 @@ public class KeycloakAdminService(HttpClient http, IConfiguration config)
         );
     }
 
+    public async Task<JsonElement> GetUserByIdAsync(string userId)
+    {
+        await SetAuthHeaderAsync();
+
+        var response = await http.GetAsync($"/admin/realms/{_realm}/users/{userId}");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<JsonElement>();
+    }
+
 }

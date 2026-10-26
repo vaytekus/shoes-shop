@@ -61,7 +61,9 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
                 p.ManufactureCountry,
                 p.CategoryId,
                 p.Category != null ? p.Category.Name : null,
-                p.Variants.Select(v => new ProductVariantResponse(
+                p.Variants
+                    .OrderBy(v => v.SortOrder)
+                    .Select(v => new ProductVariantResponse(
                     v.Id,
                     v.Name,
                     v.Sku,

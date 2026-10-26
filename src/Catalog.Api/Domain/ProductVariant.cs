@@ -17,4 +17,5 @@ public class ProductVariant()
     // Photos and sizes
     public ICollection<ProductImage> Images { get; set; } = []!;
     public ICollection<ProductSize> Sizes { get; set; } = []!;
+    public int SortOrder { get; set; }
 }
