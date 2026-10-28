@@ -1,10 +1,12 @@
 using Catalog.Api.Infrastructure;
+using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ShoesShop.Shared.Events;
 
 namespace Catalog.Api.Features.Products.Commands.DeleteProduct;
 
-public class DeleteProductHandler(CatalogDbContext db) : IRequestHandler<DeleteProductCommand>
+public class DeleteProductHandler(CatalogDbContext db, IPublishEndpoint publish) : IRequestHandler<DeleteProductCommand>
 {
     public async Task Handle(DeleteProductCommand request, CancellationToken ct)
     {
@@ -18,5 +20,6 @@ public class DeleteProductHandler(CatalogDbContext db) : IRequestHandler<DeleteP
 
         db.Products.Remove(product);
         await db.SaveChangesAsync(ct);
+        await publish.Publish(new ProductDeletedEvent(request.Id), ct);
     }
 }

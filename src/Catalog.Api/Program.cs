@@ -6,10 +6,12 @@ using Catalog.Api.Features.Categories;
 using Catalog.Api.Features.Products;
 using Catalog.Api.Features.Products.Commands.UploadProductImages;
 using Catalog.Api.Infrastructure;
+using Catalog.Api.Infrastructure.Search;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using FluentValidation;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+
+builder.Services.AddHostedService<ElasticsearchReindexService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -86,6 +90,18 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.AddAzureBlobClient("azure-blobs");
 builder.Services.AddScoped<BlobStorageService>();
 builder.Services.AddScoped<UploadProductImagesValidator>();
+
+builder.AddElasticsearchClient("elasticsearch");
+
+builder.Services.AddMassTransit(x => {
+    x.AddConsumer<ProductIndexConsumer>();
+    x.AddConsumer<ProductDeletedConsumer>();
+
+    x.UsingRabbitMq((ctx, cfg) => {
+        cfg.Host(builder.Configuration.GetConnectionString("rabbitmq"));
+        cfg.ConfigureEndpoints(ctx);
+    });
+});
 
 var app = builder.Build();
 

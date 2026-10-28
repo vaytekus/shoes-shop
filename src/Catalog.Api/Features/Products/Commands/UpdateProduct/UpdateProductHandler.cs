@@ -1,10 +1,12 @@
 using Catalog.Api.Infrastructure;
+using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ShoesShop.Shared.Events;
 
 namespace Catalog.Api.Features.Products.Commands.UpdateProduct;
 
-public class UpdateProductHandler(CatalogDbContext db) : IRequestHandler<UpdateProductCommand>
+public class UpdateProductHandler(CatalogDbContext db, IPublishEndpoint publish) : IRequestHandler<UpdateProductCommand>
 {
     public async Task Handle(UpdateProductCommand request, CancellationToken ct)
     {
@@ -39,5 +41,6 @@ public class UpdateProductHandler(CatalogDbContext db) : IRequestHandler<UpdateP
         product.UpdatedAt = DateTime.UtcNow;
 
         await db.SaveChangesAsync(ct);
+        await publish.Publish(new ProductUpdatedEvent(request.Id), ct);
     }
 }

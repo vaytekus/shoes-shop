@@ -6,13 +6,6 @@ var postgres = builder.AddPostgres("postgres")
     .WithDataVolume()
     .WithPgAdmin(c => c.WithHostPort(5050));
 
-var catalogDb = postgres.AddDatabase("catalog-db");
-
-var catalog = builder.AddProject<Projects.Catalog_Api>("catalog")
-    .WithReference(catalogDb)
-    .WithReference(azureBlobs)
-    .WaitFor(catalogDb);
-
 var redis = builder.AddRedis("redis")
     .WithDataVolume()
     .WithHostPort(6379);
@@ -23,6 +16,21 @@ var keycloak = builder.AddKeycloak("keycloak", port: 8080)
 
 var rabbitmq = builder.AddRabbitMQ("rabbitmq")
     .WithManagementPlugin();
+
+var elasticsearch = builder.AddElasticsearch("elasticsearch")
+    .WithDataVolume();
+
+var catalogDb = postgres.AddDatabase("catalog-db");
+
+var catalog = builder.AddProject<Projects.Catalog_Api>("catalog")
+    .WithReference(catalogDb)
+    .WithReference(azureBlobs)
+    .WithReference(rabbitmq)
+    .WithReference(elasticsearch)
+    .WaitFor(catalogDb)
+    .WaitFor(elasticsearch)
+    .WaitFor(rabbitmq);
+
 
 var basket = builder.AddProject<Projects.Basket_Api>("basket")
     .WithReference(redis)

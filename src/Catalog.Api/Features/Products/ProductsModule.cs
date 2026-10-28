@@ -13,6 +13,7 @@ using Catalog.Api.Features.Products.Commands.UpdateVariant;
 using Catalog.Api.Features.Products.Commands.UploadProductImages;
 using Catalog.Api.Features.Products.Queries.GetProductById;
 using Catalog.Api.Features.Products.Queries.GetProducts;
+using Catalog.Api.Features.Products.Queries.SearchProducts;
 
 namespace Catalog.Api.Features.Products;
 
@@ -95,6 +96,10 @@ public static class ProductsModule
             .WithName("ReorderVariants")
             .WithSummary("ReorderVariants")
             .RequireAuthorization("AdminOnly");
+
+        group.MapGet("/search", SearchProductsEndpoint.Handle)
+            .WithName("SearchProducts")
+            .WithSummary("SearchProducts");
 
         return app;
     }

@@ -1,10 +1,12 @@
 using Catalog.Api.Domain;
 using Catalog.Api.Infrastructure;
+using MassTransit;
 using MediatR;
+using ShoesShop.Shared.Events;
 
 namespace Catalog.Api.Features.Products.Commands.CreateProduct;
 
-public class CreateProductHandler(CatalogDbContext db) : IRequestHandler<CreateProductCommand, Guid>
+public class CreateProductHandler(CatalogDbContext db, IPublishEndpoint publish) : IRequestHandler<CreateProductCommand, Guid>
 {
     public async Task<Guid> Handle(CreateProductCommand request, CancellationToken ct)
     {
@@ -37,6 +39,8 @@ public class CreateProductHandler(CatalogDbContext db) : IRequestHandler<CreateP
 
         db.Products.Add(product);
         await db.SaveChangesAsync(ct);
+
+        await publish.Publish(new ProductCreatedEvent(product.Id), ct);
         return product.Id;
     }
 }
