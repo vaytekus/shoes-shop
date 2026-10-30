@@ -223,6 +223,10 @@ namespace Catalog.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("color_name");
 
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_primary");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")

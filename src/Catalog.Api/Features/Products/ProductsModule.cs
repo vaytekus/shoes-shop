@@ -1,16 +1,18 @@
-using Catalog.Api.Features.Products.Commands.AddSize;
-using Catalog.Api.Features.Products.Commands.CreateProduct;
-using Catalog.Api.Features.Products.Commands.CreateVariant;
-using Catalog.Api.Features.Products.Commands.DeleteImage;
-using Catalog.Api.Features.Products.Commands.DeleteProduct;
-using Catalog.Api.Features.Products.Commands.DeleteSize;
-using Catalog.Api.Features.Products.Commands.DeleteVariant;
-using Catalog.Api.Features.Products.Commands.ReorderImages;
-using Catalog.Api.Features.Products.Commands.ReorderVariants;
-using Catalog.Api.Features.Products.Commands.UpdateProduct;
-using Catalog.Api.Features.Products.Commands.UpdateSize;
-using Catalog.Api.Features.Products.Commands.UpdateVariant;
-using Catalog.Api.Features.Products.Commands.UploadProductImages;
+using Catalog.Api.Features.Products.Commands.Sizes.AddSize;
+using Catalog.Api.Features.Products.Commands.Products.CreateProduct;
+using Catalog.Api.Features.Products.Commands.Images.DeleteImage;
+using Catalog.Api.Features.Products.Commands.Products.DeleteProduct;
+using Catalog.Api.Features.Products.Commands.Sizes.DeleteSize;
+using Catalog.Api.Features.Products.Commands.Images.ReorderImages;
+using Catalog.Api.Features.Products.Commands.Variants.ReorderVariants;
+using Catalog.Api.Features.Products.Commands.Products.UpdateProduct;
+using Catalog.Api.Features.Products.Commands.Sizes.UpdateSize;
+using Catalog.Api.Features.Products.Commands.Variants.UpdateVariant;
+using Catalog.Api.Features.Products.Commands.Images.UploadProductImages;
+using Catalog.Api.Features.Products.Commands.ReindexProducts;
+using Catalog.Api.Features.Products.Commands.Variants.CreateVariant;
+using Catalog.Api.Features.Products.Commands.Variants.DeleteVariant;
+using Catalog.Api.Features.Products.Commands.Variants.SetPrimaryVariant;
 using Catalog.Api.Features.Products.Queries.GetProductById;
 using Catalog.Api.Features.Products.Queries.GetProducts;
 using Catalog.Api.Features.Products.Queries.SearchProducts;
@@ -100,6 +102,16 @@ public static class ProductsModule
         group.MapGet("/search", SearchProductsEndpoint.Handle)
             .WithName("SearchProducts")
             .WithSummary("SearchProducts");
+
+        group.MapPost("/reindex", ReindexProductsEndpoint.Handle)
+            .WithName("ReindexProducts")
+            .WithSummary("ReindexProducts")
+            .RequireAuthorization("AdminOnly");
+
+        group.MapPut("/{id:guid}/variants/{variantId:guid}/set-primary", SetPrimaryVariantEndpoint.Handle)
+            .WithName("SetPrimaryVariant")
+            .WithSummary("SetPrimaryVariant")
+            .RequireAuthorization("AdminOnly");
 
         return app;
     }

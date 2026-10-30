@@ -4,7 +4,7 @@ using Catalog.Api.Behaviors;
 using Catalog.Api.Exceptions;
 using Catalog.Api.Features.Categories;
 using Catalog.Api.Features.Products;
-using Catalog.Api.Features.Products.Commands.UploadProductImages;
+using Catalog.Api.Features.Products.Commands.Images.UploadProductImages;
 using Catalog.Api.Infrastructure;
 using Catalog.Api.Infrastructure.Search;
 using MediatR;

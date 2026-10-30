@@ -4,19 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Api.Features.Categories.Commands.DeleteCategory;
 
-public class DeleteCategoryHandler(CatalogDbContext db) : IRequestHandler<DeleteCategoryCommand>
+public class DeleteCategoryHandler(CatalogDbContext db) : IRequestHandler<DeleteCategoryCommand, bool>
 {
-    public async Task Handle(DeleteCategoryCommand request, CancellationToken ct)
+    public async Task<bool> Handle(DeleteCategoryCommand request, CancellationToken ct)
     {
-        var product = await db.Categories
+        var category = await db.Categories
             .FirstOrDefaultAsync(c => c.Id == request.Id, ct);
 
-        if (product is null)
+        if (category is null)
         {
-            return;
+            return false;
         }
 
-        db.Remove(product);
+        db.Remove(category);
         await db.SaveChangesAsync(ct);
+        return true;
     }
 }

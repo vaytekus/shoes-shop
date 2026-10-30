@@ -18,4 +18,6 @@ public class ProductVariant()
     public ICollection<ProductImage> Images { get; set; } = []!;
     public ICollection<ProductSize> Sizes { get; set; } = []!;
     public int SortOrder { get; set; }
+
+    public bool IsPrimary { get; set; }
 }

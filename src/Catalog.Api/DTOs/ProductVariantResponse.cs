@@ -7,4 +7,5 @@ public record ProductVariantResponse(
     string? ColorName,
     string? ColorHex,
     IEnumerable<string> ImageUrls,
-    IEnumerable<ProductSizeResponse> Sizes);
+    IEnumerable<ProductSizeResponse> Sizes,
+    bool IsPrimary);

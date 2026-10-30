@@ -62,7 +62,8 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
                 p.CategoryId,
                 p.Category != null ? p.Category.Name : null,
                 p.Variants
-                    .OrderBy(v => v.SortOrder)
+                    .OrderByDescending(v => v.IsPrimary)
+                    .ThenBy(v => v.SortOrder)
                     .Select(v => new ProductVariantResponse(
                     v.Id,
                     v.Name,
@@ -70,7 +71,8 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
                     v.ColorName,
                     v.ColorHex,
                     v.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
-                    v.Sizes.Select(s => new ProductSizeResponse(s.Id, s.Size, s.StockQuantity))
+                    v.Sizes.Select(s => new ProductSizeResponse(s.Id, s.Size, s.StockQuantity)),
+                    v.IsPrimary
                 ))
             ))
             .ToListAsync(ct);

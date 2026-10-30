@@ -33,8 +33,8 @@ public static class ProductDocumentMapper
         Sizes = p.Variants
             .SelectMany(v => v.Sizes)
             .Select(s => s.Size).Distinct().ToList(),
-        ImageUrl = p.Variants
-            .FirstOrDefault()?
+        ImageUrl = (p.Variants
+            .FirstOrDefault(v => v.IsPrimary) ?? p.Variants.FirstOrDefault())?
             .Images.OrderBy(i => i.SortOrder)
             .FirstOrDefault()?.Url,
     };

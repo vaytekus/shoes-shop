@@ -9,7 +9,7 @@ public static class DeleteCategoryEndpoints
         Guid id,
         CancellationToken ct)
     {
-        await sender.Send(new DeleteCategoryCommand(id), ct);
-        return Results.NoContent();
+        var found = await sender.Send(new DeleteCategoryCommand(id), ct);
+        return found ? Results.NoContent() : Results.NotFound();
     }
 }

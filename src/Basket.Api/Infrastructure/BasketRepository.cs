@@ -6,7 +6,8 @@ namespace Basket.Api.Infrastructure;
 
 public class BasketRepository(IConnectionMultiplexer redis) : IBasketRepository
 {
-    private  readonly IDatabase _db = redis.GetDatabase();
+    private readonly IDatabase _db = redis.GetDatabase();
+    private static readonly TimeSpan _basketTtl = TimeSpan.FromDays(2);
 
     public async Task<CustomerBasket?> GetBasketAsync(string customerId, CancellationToken ct = default)
     {
@@ -17,7 +18,7 @@ public class BasketRepository(IConnectionMultiplexer redis) : IBasketRepository
     public async Task<CustomerBasket> SaveBasketAsync(CustomerBasket basket, CancellationToken ct = default)
     {
         var json = JsonSerializer.Serialize(basket);
-        await _db.StringSetAsync(basket.CustomerId, json);
+        await _db.StringSetAsync(basket.CustomerId, json, _basketTtl);
         return basket;
     }
 
