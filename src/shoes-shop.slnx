@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="AppHost/ShoesShop.AppHost/ShoesShop.AppHost.csproj" />
   <Project Path="Basket.Api/Basket.Api.csproj" />
+  <Project Path="Catalog.Api.Tests/Catalog.Api.Tests.csproj" />
   <Project Path="Catalog.Api/Catalog.Api.csproj" />
   <Project Path="Gateway/Gateway.csproj" />
   <Project Path="Order.Api/Order.Api.csproj" />
