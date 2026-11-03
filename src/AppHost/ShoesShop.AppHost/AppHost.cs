@@ -40,6 +40,13 @@ var basket = builder.AddProject<Projects.Basket_Api>("basket")
     .WaitFor(redis)
     .WaitFor(rabbitmq);
 
+var wishlist = builder.AddProject<Projects.Wishlist_Api>("wishlist")
+    .WithReference(redis)
+    .WithReference(redis.GetEndpoint("tcp"))
+    .WithReference(rabbitmq)
+    .WaitFor(redis)
+    .WaitFor(rabbitmq);
+
 var orderDb = postgres.AddDatabase("order-db");
 
 var order = builder.AddProject<Projects.Order_Api>("order")
@@ -58,9 +65,11 @@ var gateway = builder.AddProject<Projects.Gateway>("gateway")
     .WithReference(basket)
     .WithReference(order)
     .WithReference(user)
+    .WithReference(wishlist)
     .WaitFor(catalog)
     .WaitFor(basket)
     .WaitFor(order)
-    .WaitFor(user);
+    .WaitFor(user)
+    .WaitFor(wishlist);
 
 builder.Build().Run();
