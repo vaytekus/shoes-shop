@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using User.Api.DTOs;
 
 namespace User.Api.Infrastructure;
 
@@ -96,18 +97,32 @@ public class KeycloakAdminService(HttpClient http, IConfiguration config)
     {
         await SetAuthHeaderAsync();
 
+        var getResponse = await http.GetAsync($"/admin/realms/{_realm}/users/{userId}");
+        getResponse.EnsureSuccessStatusCode();
+        var existing = await getResponse.Content.ReadFromJsonAsync<JsonElement>();
+        var attrs = new Dictionary<string, string[]>();
+        if (existing.TryGetProperty("attributes", out var existingAttrs))
+        {
+            foreach (var prop in existingAttrs.EnumerateObject())
+            {
+                attrs[prop.Name] = prop.Value.EnumerateArray()
+                    .Select(v => v.GetString() ?? "")
+                    .ToArray();
+            }
+        }
+
         var body = JsonSerializer.Serialize(new
         {
             firstName,
             lastName,
             email,
-            username = email
+            username = email,
+            attributes = attrs
         });
 
         var response = await http.PutAsync(
-        $"/admin/realms/{_realm}/users/{userId}",
-        new StringContent(body, Encoding.UTF8, "application/json")
-        );
+            $"/admin/realms/{_realm}/users/{userId}",
+            new StringContent(body, Encoding.UTF8, "application/json"));
 
         response.EnsureSuccessStatusCode();
     }
@@ -215,4 +230,61 @@ public class KeycloakAdminService(HttpClient http, IConfiguration config)
         return await response.Content.ReadFromJsonAsync<JsonElement>();
     }
 
+    public async Task<UserProfileDto> GetMeAsync(string userId)
+    {
+        await SetAuthHeaderAsync();
+
+        var response = await http.GetAsync($"/admin/realms/{_realm}/users/{userId}");
+        response.EnsureSuccessStatusCode();
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        string? avatarUrl = null;
+
+        if (json.TryGetProperty("attributes", out var attrs) &&
+            attrs.TryGetProperty("avatarUrl", out var arr) &&
+            arr.GetArrayLength() > 0)
+        {
+            avatarUrl = arr[0].GetString();
+        }
+
+        return new UserProfileDto(
+            json.TryGetProperty("firstName", out var fn) ? fn.GetString() ?? "" : "",
+            json.TryGetProperty("lastName", out var ln) ? ln.GetString() ?? "" : "",
+            json.TryGetProperty("email", out var em) ? em.GetString() ?? "" : "",
+            avatarUrl
+        );
+    }
+
+    public async Task UpdateAvatarUrlAsync(string userId, string avatarUrl)
+    {
+        await SetAuthHeaderAsync();
+
+        var getResponse = await http.GetAsync($"/admin/realms/{_realm}/users/{userId}");
+        getResponse.EnsureSuccessStatusCode();
+        var existing = await getResponse.Content.ReadFromJsonAsync<JsonElement>();
+        var attrs = new Dictionary<string, string[]>();
+
+        if (existing.TryGetProperty("attributes", out var existingAttrs))
+        {
+            foreach (var prop in existingAttrs.EnumerateObject())
+            {
+                attrs[prop.Name] = prop.Value.EnumerateArray()
+                    .Select(v => v.GetString() ?? "")
+                    .ToArray();
+            }
+        }
+
+        attrs["avatarUrl"] = [avatarUrl];
+        var body = JsonSerializer.Serialize(new
+        {
+            firstName = existing.TryGetProperty("firstName", out var fn) ? fn.GetString() : null,
+            lastName = existing.TryGetProperty("lastName", out var ln) ? ln.GetString() : null,
+            email = existing.TryGetProperty("email", out var em) ? em.GetString() : null,
+            attributes = attrs
+        });
+        var putResponse = await http.PutAsync(
+            $"/admin/realms/{_realm}/users/{userId}",
+            new StringContent(body, Encoding.UTF8, "application/json"));
+        putResponse.EnsureSuccessStatusCode();
+    }
 }

@@ -31,7 +31,6 @@ var catalog = builder.AddProject<Projects.Catalog_Api>("catalog")
     .WaitFor(elasticsearch)
     .WaitFor(rabbitmq);
 
-
 var basket = builder.AddProject<Projects.Basket_Api>("basket")
     .WithReference(redis)
     .WithReference(redis.GetEndpoint("tcp"))
@@ -57,6 +56,7 @@ var order = builder.AddProject<Projects.Order_Api>("order")
     .WaitFor(rabbitmq);
 
 var user = builder.AddProject<Projects.User_Api>("user")
+    .WithReference(azureBlobs)
     .WithReference(keycloak)
     .WaitFor(keycloak);
 

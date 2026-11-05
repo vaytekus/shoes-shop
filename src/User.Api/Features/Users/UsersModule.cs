@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using User.Api.DTOs;
 using User.Api.Infrastructure;
 
@@ -98,6 +100,50 @@ public static class UsersModule
         .WithName("DeleteAccount")
         .WithSummary("DeleteAccount")
         .RequireAuthorization();
+
+        group.MapGet("/me", async (ClaimsPrincipal user, KeycloakAdminService keycloak) => {
+            var userId = user.FindFirst("sub")?.Value;
+            if (userId is null)
+            {
+                return Results.Unauthorized();
+            }
+
+            var profile = await keycloak.GetMeAsync(userId);
+            return Results.Ok(profile);
+        })
+        .WithName("GetMe")
+        .RequireAuthorization();
+
+        group.MapPost("/me/avatar", async (
+            IFormFile file,
+            ClaimsPrincipal user,
+            KeycloakAdminService keycloak,
+            BlobServiceClient blobServiceClient,
+            CancellationToken ct
+        ) => {
+            var userId = user.FindFirst("sub")?.Value;
+            if (userId is null)
+            {
+                return Results.Unauthorized();
+            }
+
+            var container = blobServiceClient.GetBlobContainerClient("avatars");
+            await container.CreateIfNotExistsAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob, cancellationToken: ct);
+
+            var blobName = $"avatars/{userId}{Path.GetExtension(file.FileName)}";
+            var blob = container.GetBlobClient(blobName);
+            await blob.UploadAsync(file.OpenReadStream(),
+                new BlobHttpHeaders { ContentType = file.ContentType },
+                cancellationToken:ct);
+
+            var avatarUrl = blob.Uri.ToString();
+
+            await keycloak.UpdateAvatarUrlAsync(userId, avatarUrl);
+            return Results.Ok(new {avatarUrl});
+        })
+        .WithName("UploadAvatar")
+        .RequireAuthorization()
+        .DisableAntiforgery();
 
         group.MapPost("/login", async (LoginRequest request, KeycloakAdminService keycloak, HttpContext ctx, ILogger<Program> logger) => {
             try
