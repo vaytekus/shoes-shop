@@ -8,4 +8,5 @@ public class BasketItem
     public int Quantity { get; set; }
     public string ImageUrl { get; set; } = null!;
     public string CategoryName { get; set; } = string.Empty;
+    public string Size { get; set; } = string.Empty;
 }

@@ -11,8 +11,8 @@ public class UpdateItemHandler(IBasketRepository repository) : IRequestHandler<U
         var basket = await repository.GetBasketAsync(request.CustomerId, ct)
             ?? throw new KeyNotFoundException($"Basket for customer {request.CustomerId} not found");
 
-        var item = basket.Items.FirstOrDefault(i => i.ProductId == request.ProductId)
-            ?? throw new KeyNotFoundException($"Product {request.ProductId} not found in basket");
+        var item = basket.Items.FirstOrDefault(i => i.ProductId == request.ProductId && i.Size == request.Size)
+            ?? throw new KeyNotFoundException($"Product {request.ProductId} size {request.Size} not found in basket");
 
         item.ProductName = request.ProductName;
         item.Price = request.Price;

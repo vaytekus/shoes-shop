@@ -8,9 +8,10 @@ public static class RemoveItemEndpoint
         IMediator mediator,
         string customerId,
         Guid productId,
+        string size,
         CancellationToken ct)
     {
-        await mediator.Send(new RemoveItemCommand(customerId, productId), ct);
+        await mediator.Send(new RemoveItemCommand(customerId, productId, size), ct);
         return Results.NoContent();
     }
 }

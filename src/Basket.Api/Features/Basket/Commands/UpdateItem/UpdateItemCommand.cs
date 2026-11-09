@@ -9,4 +9,5 @@ public record UpdateItemCommand(
     string ProductName,
     decimal Price,
     int Quantity,
-    string ImageUrl) : IRequest<CustomerBasket>;
+    string ImageUrl,
+    string Size) : IRequest<CustomerBasket>;

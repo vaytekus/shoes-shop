@@ -15,7 +15,7 @@ public class AddItemHandler(IBasketRepository repository) : IRequestHandler<AddI
             };
 
         var existing = basket.Items
-            .FirstOrDefault(b => b.ProductId == request.ProductId);
+            .FirstOrDefault(b => b.ProductId == request.ProductId && b.Size == request.Size);
 
         if (existing is not null)
         {
@@ -29,7 +29,8 @@ public class AddItemHandler(IBasketRepository repository) : IRequestHandler<AddI
                 ProductName = request.ProductName,
                 Price = request.Price,
                 Quantity = request.Quantity,
-                ImageUrl = request.ImageUrl
+                ImageUrl = request.ImageUrl,
+                Size = request.Size
             });
         }
 

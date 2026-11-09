@@ -17,7 +17,8 @@ public static class AddItemEndpoint
             request.ProductName,
             request.Price,
             request.Quantity,
-            request.ImageUrl
+            request.ImageUrl,
+            request.Size
         );
 
         var result = await mediator.Send(command, ct);

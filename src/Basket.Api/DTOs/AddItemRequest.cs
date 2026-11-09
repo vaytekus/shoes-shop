@@ -5,4 +5,5 @@ public record AddItemRequest(
     string ProductName,
     decimal Price,
     int Quantity,
-    string ImageUrl);
+    string ImageUrl,
+    string Size);

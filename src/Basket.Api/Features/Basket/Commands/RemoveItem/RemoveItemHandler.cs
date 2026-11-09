@@ -15,7 +15,7 @@ public class RemoveItemHandler(IBasketRepository repository) : IRequestHandler<R
         }
 
         basket.Items
-            .RemoveAll(i => i.ProductId == request.ProductId);
+            .RemoveAll(i => i.ProductId == request.ProductId && i.Size == request.Size);
 
         await repository.SaveBasketAsync(basket, ct);
     }

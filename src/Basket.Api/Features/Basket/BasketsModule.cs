@@ -1,5 +1,6 @@
 using Basket.Api.Features.Basket.Commands.AddItem;
 using Basket.Api.Features.Basket.Commands.ClearBasket;
+using Basket.Api.Features.Basket.Commands.MergeBasket;
 using Basket.Api.Features.Basket.Commands.RemoveItem;
 using Basket.Api.Features.Basket.Commands.UpdateItem;
 using Basket.Api.Features.Basket.Queries.GetBasket;
@@ -31,6 +32,10 @@ public static class BasketsModule
         group.MapPut("/{customerId}/items/{productId}", UpdateItemEndpoint.Handle)
             .WithName("UpdateProduct")
             .WithSummary("UpdateProduct");
+
+        group.MapPost("/{customerId}/merge", MergeBasketEndpoint.Handle)
+            .WithName("MergeBasket")
+            .WithSummary("MergeBasket");
 
         return app;
     }
