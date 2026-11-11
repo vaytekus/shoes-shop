@@ -5,6 +5,7 @@ using Catalog.Api.Exceptions;
 using Catalog.Api.Features.Categories;
 using Catalog.Api.Features.Products;
 using Catalog.Api.Features.Products.Commands.Images.UploadProductImages;
+using Catalog.Api.Features.Reviews;
 using Catalog.Api.Infrastructure;
 using Catalog.Api.Infrastructure.Search;
 using MediatR;
@@ -124,6 +125,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapDefaultEndpoints();
 app.MapProducts();
+app.MapReviews();
 app.MapCategories();
 
 app.Run();

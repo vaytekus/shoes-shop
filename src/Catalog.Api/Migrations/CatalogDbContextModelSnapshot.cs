@@ -179,6 +179,57 @@ namespace Catalog.Api.Migrations
                     b.ToTable("product_images", (string)null);
                 });
 
+            modelBuilder.Entity("Catalog.Api.Domain.ProductReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("customer_id");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("customer_name");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer")
+                        .HasColumnName("rating");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_product_reviews");
+
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("ix_product_reviews_product_id");
+
+                    b.ToTable("product_reviews", (string)null);
+                });
+
             modelBuilder.Entity("Catalog.Api.Domain.ProductSize", b =>
                 {
                     b.Property<Guid>("Id")
@@ -273,6 +324,18 @@ namespace Catalog.Api.Migrations
                         .HasConstraintName("fk_product_images_product_variants_variant_id");
 
                     b.Navigation("Variant");
+                });
+
+            modelBuilder.Entity("Catalog.Api.Domain.ProductReview", b =>
+                {
+                    b.HasOne("Catalog.Api.Domain.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_product_reviews_products_product_id");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Catalog.Api.Domain.ProductSize", b =>
