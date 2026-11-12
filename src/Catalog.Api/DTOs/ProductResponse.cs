@@ -23,4 +23,6 @@ public record ProductResponse(
     string? ManufactureCountry,
     Guid? CategoryId,
     string? CategoryName,
-    IEnumerable<ProductVariantResponse> Variants);
+    IEnumerable<ProductVariantResponse> Variants,
+    double AverageRating,
+    int ReviewCount);

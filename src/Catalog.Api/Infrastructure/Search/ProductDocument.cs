@@ -28,4 +28,7 @@ public class ProductDocument
     public List<string> Colors { get; set; } = [];
     public List<string> Sizes { get; set; } = [];
     public string? ImageUrl { get; set; }
+
+    public double AverageRating { get; set; }
+    public int ReviewCount { get; set; }
 }

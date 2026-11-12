@@ -1,10 +1,12 @@
 using Catalog.Api.Domain;
 using Catalog.Api.Infrastructure;
+using MassTransit;
 using MediatR;
+using ShoesShop.Shared.Events;
 
 namespace Catalog.Api.Features.Reviews.Command.ApproveReview;
 
-public class ApproveReviewHandler(CatalogDbContext db) : IRequestHandler<ApproveReviewCommand>
+public class ApproveReviewHandler(CatalogDbContext db, IPublishEndpoint bus) : IRequestHandler<ApproveReviewCommand>
 {
     public async Task Handle(ApproveReviewCommand request, CancellationToken ct)
     {
@@ -13,5 +15,7 @@ public class ApproveReviewHandler(CatalogDbContext db) : IRequestHandler<Approve
 
         review.Status = ReviewStatus.Approved;
         await db.SaveChangesAsync(ct);
+
+        await bus.Publish(new ReviewStatusChangedEvent(review.ProductId), ct);
     }
 }

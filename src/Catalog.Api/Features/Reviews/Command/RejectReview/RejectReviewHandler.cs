@@ -1,10 +1,12 @@
 using Catalog.Api.Domain;
 using Catalog.Api.Infrastructure;
+using MassTransit;
 using MediatR;
+using ShoesShop.Shared.Events;
 
 namespace Catalog.Api.Features.Reviews.Command.RejectReview;
 
-public class RejectReviewHandler(CatalogDbContext db) : IRequestHandler<RejectReviewCommand>
+public class RejectReviewHandler(CatalogDbContext db, IPublishEndpoint bus) : IRequestHandler<RejectReviewCommand>
 {
     public async Task Handle(RejectReviewCommand request, CancellationToken ct)
     {
@@ -13,5 +15,7 @@ public class RejectReviewHandler(CatalogDbContext db) : IRequestHandler<RejectRe
 
         review.Status = ReviewStatus.Rejected;
         await db.SaveChangesAsync(ct);
+
+        await bus.Publish(new ReviewStatusChangedEvent(review.ProductId), ct);
     }
 }

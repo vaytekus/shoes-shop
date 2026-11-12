@@ -1,3 +1,4 @@
+using Catalog.Api.Domain;
 using Catalog.Api.DTOs;
 using Catalog.Api.Infrastructure;
 using MediatR;
@@ -51,7 +52,12 @@ public class GetProductByIdHandler(CatalogDbContext db) : IRequestHandler<GetPro
                     v.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
                     v.Sizes.Select(s => new ProductSizeResponse(s.Id, s.Size, s.StockQuantity)),
                     v.IsPrimary
-                ))
+                )),
+                db.Set<ProductReview>()
+                    .Where(r => r.ProductId == p.Id && r.Status == ReviewStatus.Approved)
+                    .Select(r => (double?)r.Rating).Average() ?? 0,
+                db.Set<ProductReview>()
+                    .Count(r => r.ProductId == p.Id && r.Status == ReviewStatus.Approved)
             ))
             .FirstOrDefaultAsync(ct);
     }
