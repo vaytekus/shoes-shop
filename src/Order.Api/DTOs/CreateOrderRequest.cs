@@ -3,6 +3,11 @@ using Order.Api.Domain;
 namespace Order.Api.DTOs;
 
 public record CreateOrderRequest(
-    string CustomerId,
+    string FirstName,
+    string LastName,
+    string Phone,
+    string Email,
+    DeliveryType DeliveryType,
+    PaymentMethod PaymentMethod,
     List<OrderItemDto> Items,
     ShippingAddressDto ShippingAddress);

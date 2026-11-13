@@ -23,24 +23,31 @@ public class GetCustomerOrdersHandler(OrderDbContext db) : IRequestHandler<GetCu
             .ToListAsync(ct);
 
         var items = orders.Select(order => new OrderResponse(
-        order.Id,
-        order.CustomerId,
-        order.Status,
-        order.TotalAmount,
-        order.CreatedAt,
-        new ShippingAddressDto(
-        order.ShippingAddress.Street,
-        order.ShippingAddress.City,
-        order.ShippingAddress.Country,
-        order.ShippingAddress.ZipCode
-        ),
-        order.Items.Select(i => new OrderItemDto(
-        i.ProductId,
-        i.ProductName,
-        i.Price,
-        i.Quantity,
-        i.ImageUrl
-        )).ToList()
+            order.Id,
+            order.CustomerId,
+            order.Status,
+            order.FirstName,
+            order.LastName,
+            order.Phone,
+            order.Email,
+            order.DeliveryType,
+            order.PaymentMethod,
+            order.TotalAmount,
+            order.CreatedAt,
+            new ShippingAddressDto(
+                order.ShippingAddress.Street,
+                order.ShippingAddress.City,
+                order.ShippingAddress.Country,
+                order.ShippingAddress.ZipCode
+            ),
+            order.Items.Select(i => new OrderItemDto(
+                i.ProductId,
+                i.ProductName,
+                i.Price,
+                i.Quantity,
+                i.ImageUrl,
+                i.Size
+            )).ToList()
         )).ToList();
 
         return new PagedResult<OrderResponse>(items, totalCount, request.Page, request.PageSize);

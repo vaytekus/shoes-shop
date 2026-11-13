@@ -10,28 +10,33 @@ public static class OrdersModule
 {
     public static IEndpointRouteBuilder MapOrders(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/orders").WithTags("Orders")
-            .RequireAuthorization();
+        var group = app.MapGroup("/api/orders")
+            .WithTags("Orders");
 
         group.MapGet("/", GetAllOrdersEndpoint.Handle)
             .WithName("GetAllOrders")
-            .WithSummary("GetAllOrders");
+            .WithSummary("GetAllOrders")
+            .RequireAuthorization();
 
         group.MapGet("/{id:guid}", GetOrderEndpoint.Handle)
             .WithName("GetOrder")
-            .WithSummary("GetOrder");
+            .WithSummary("GetOrder")
+            .AllowAnonymous();
 
         group.MapPost("/", CreateOrderEndpoint.Handle)
             .WithName("CreateOrder")
-            .WithSummary("CreateOrder");
+            .WithSummary("CreateOrder")
+            .AllowAnonymous();
 
         group.MapGet("/customer/{customerId}", GetCustomerOrdersEndpoint.Handle)
             .WithName("GetCustomerOrders")
-            .WithSummary("GetCustomerOrders");
+            .WithSummary("GetCustomerOrders")
+            .RequireAuthorization();
 
         group.MapPut("{id:guid}/status", UpdateOrderStatusEndpoint.Handle)
             .WithName("UpdateOrderStatus")
-            .WithSummary("UpdateOrderStatus");
+            .WithSummary("UpdateOrderStatus")
+            .RequireAuthorization();
 
         return app;
     }

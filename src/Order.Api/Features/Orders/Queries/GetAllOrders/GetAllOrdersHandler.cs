@@ -23,6 +23,12 @@ public class GetAllOrdersHandler(OrderDbContext db) : IRequestHandler<GetAllOrde
             order.Id,
             order.CustomerId,
             order.Status,
+            order.FirstName,
+            order.LastName,
+            order.Phone,
+            order.Email,
+            order.DeliveryType,
+            order.PaymentMethod,
             order.TotalAmount,
             order.CreatedAt,
             new ShippingAddressDto(
@@ -36,7 +42,8 @@ public class GetAllOrdersHandler(OrderDbContext db) : IRequestHandler<GetAllOrde
                 i.ProductName,
                 i.Price,
                 i.Quantity,
-                i.ImageUrl
+                i.ImageUrl,
+                i.Size
             )).ToList()
             )).ToList();
 

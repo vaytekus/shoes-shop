@@ -13,10 +13,14 @@ public class CreateOrderHandler(OrderDbContext db, IPublishEndpoint publishEndpo
         var order = new CustomerOrder
         {
             Id = Guid.NewGuid(),
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Phone = request.Phone,
+            Email = request.Email,
+            DeliveryType = request.DeliveryType,
+            PaymentMethod = request.PaymentMethod,
             CustomerId = request.CustomerId,
             Status = OrderStatus.Pending,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
             ShippingAddress = new ShippingAddress
             {
                 Street = request.ShippingAddress.Street, City = request.ShippingAddress.City, Country = request.ShippingAddress.Country, ZipCode = request.ShippingAddress.ZipCode
@@ -28,9 +32,12 @@ public class CreateOrderHandler(OrderDbContext db, IPublishEndpoint publishEndpo
                 ProductName = i.ProductName,
                 Price = i.Price,
                 Quantity = i.Quantity,
-                ImageUrl = i.ImageUrl
+                ImageUrl = i.ImageUrl,
+                Size = i.Size
             }).ToList(),
-            TotalAmount = request.Items.Sum(i => i.Price * i.Quantity)
+            TotalAmount = request.Items.Sum(i => i.Price * i.Quantity),
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
         };
 
         db.Orders.Add(order);

@@ -38,6 +38,34 @@ namespace Order.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("customer_id");
 
+                    b.Property<int>("DeliveryType")
+                        .HasColumnType("integer")
+                        .HasColumnName("delivery_type");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("first_name");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("last_name");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer")
+                        .HasColumnName("payment_method");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("phone");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text")
@@ -91,6 +119,11 @@ namespace Order.Api.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
                         .HasColumnName("quantity");
+
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("size");
 
                     b.HasKey("Id")
                         .HasName("pk_order_items");
