@@ -19,4 +19,6 @@ public class CustomerOrder
     public decimal TotalAmount { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+
+    public string TrackingNumber { get; set; } = string.Empty;
 }

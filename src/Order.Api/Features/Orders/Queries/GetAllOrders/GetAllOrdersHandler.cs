@@ -37,6 +37,7 @@ public class GetAllOrdersHandler(OrderDbContext db) : IRequestHandler<GetAllOrde
                 order.ShippingAddress.Country,
                 order.ShippingAddress.ZipCode
             ),
+            order.TrackingNumber,
             order.Items.Select(i => new OrderItemDto(
                 i.ProductId,
                 i.ProductName,

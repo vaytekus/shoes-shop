@@ -15,4 +15,5 @@ public record OrderResponse(
     decimal TotalAmount,
     DateTime CreatedAt,
     ShippingAddressDto ShippingAddress,
+    string TrackingNumber,
     List<OrderItemDto> Items);

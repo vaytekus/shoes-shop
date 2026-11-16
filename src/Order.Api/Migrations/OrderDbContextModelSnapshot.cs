@@ -76,6 +76,11 @@ namespace Order.Api.Migrations
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("total_amount");
 
+                    b.Property<string>("TrackingNumber")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tracking_number");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");

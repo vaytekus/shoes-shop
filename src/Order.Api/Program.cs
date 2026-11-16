@@ -79,6 +79,9 @@ builder.Services.AddDbContext<OrderDbContext>(options =>
         .UseSnakeCaseNamingConvention()
     );
 
+builder.Services.AddHttpClient<NovaPoshtaTrackingClient>();
+builder.Services.AddHostedService<OrderTrackingBackgroundService>();
+
 builder.Services.AddMassTransit(x => {
     x.UsingRabbitMq((ctx, cfg) => {
         cfg.Host(builder.Configuration.GetConnectionString("rabbitmq"));

@@ -1,4 +1,5 @@
 using Order.Api.Features.Orders.Commands.CreateOrder;
+using Order.Api.Features.Orders.Commands.SetTrackingNumber;
 using Order.Api.Features.Orders.Commands.UpdateOrderStatus;
 using Order.Api.Features.Orders.Queries.GetAllOrders;
 using Order.Api.Features.Orders.Queries.GetCustomerOrders;
@@ -36,6 +37,11 @@ public static class OrdersModule
         group.MapPut("{id:guid}/status", UpdateOrderStatusEndpoint.Handle)
             .WithName("UpdateOrderStatus")
             .WithSummary("UpdateOrderStatus")
+            .RequireAuthorization();
+
+        group.MapPut("{id:guid}/tracking", SetTrackingNumberEndpoint.Handle)
+            .WithName("SetTrackingNumber")
+            .WithSummary("SetTrackingNumber")
             .RequireAuthorization();
 
         return app;
