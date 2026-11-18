@@ -4,6 +4,7 @@ namespace Catalog.Api.Features.Products.Commands.Products.CreateProduct;
 
 public record CreateProductCommand(
     string Name,
+    string? ModelName,
     string Description,
     decimal Price,
     string? Brand,

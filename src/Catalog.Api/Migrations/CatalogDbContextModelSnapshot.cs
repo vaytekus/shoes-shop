@@ -96,6 +96,10 @@ namespace Catalog.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("manufacture_country");
 
+                    b.Property<string>("ModelName")
+                        .HasColumnType("text")
+                        .HasColumnName("model_name");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")

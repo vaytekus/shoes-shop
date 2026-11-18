@@ -14,6 +14,7 @@ public static class UpdateProductEndpoint
         var command = new UpdateProductCommand(
         id,
         request.Name,
+        request.ModelName,
         request.Description,
         request.Price,
         request.Brand,

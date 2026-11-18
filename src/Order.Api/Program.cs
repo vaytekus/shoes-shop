@@ -81,6 +81,8 @@ builder.Services.AddDbContext<OrderDbContext>(options =>
 
 builder.Services.AddHttpClient<NovaPoshtaTrackingClient>();
 builder.Services.AddHostedService<OrderTrackingBackgroundService>();
+builder.Services.AddHttpClient<CatalogClient>(c =>
+    c.BaseAddress = new Uri("https+http://catalog"));
 
 builder.Services.AddMassTransit(x => {
     x.UsingRabbitMq((ctx, cfg) => {

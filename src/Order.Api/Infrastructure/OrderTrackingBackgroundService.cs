@@ -35,6 +35,7 @@ public class OrderTrackingBackgroundService(
             try
             {
                 var statusCode = await client.GetStatusCodeAsync(order.TrackingNumber, ct);
+
                 if (statusCode == _receivedStatusCode)
                 {
                     order.Status = OrderStatus.Delivered;

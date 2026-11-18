@@ -5,6 +5,7 @@ namespace Catalog.Api.Features.Products.Commands.Products.UpdateProduct;
 public record UpdateProductCommand(
     Guid Id,
     string Name,
+    string? ModelName,
     string Description,
     decimal Price,
     string? Brand,

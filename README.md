@@ -1,139 +1,125 @@
-# shoes-shop
+# Shoes Shop — Backend
 
-E-commerce platform for footwear built with .NET microservices and React frontend.
+.NET microservices backend for a footwear e-commerce store. Educational project.
 
 ## Tech Stack
 
-### Backend
-- **.NET 10** — Web API (Minimal APIs)
-- **MediatR** — CQRS (Commands / Queries)
+- **.NET 10** — Minimal APIs
+- **MediatR** — CQRS (Commands / Queries / Handlers)
 - **FluentValidation** — validation pipeline behavior
-- **EF Core + Npgsql** — ORM + PostgreSQL per service
-- **Keycloak** — Identity Provider (OpenID Connect / OAuth2)
-- **Redis** — Basket + output cache
-- **RabbitMQ** → **Azure Service Bus** (prod) — async messaging between services
-- **MinIO** → **Azure Blob Storage** (prod) — media files
-- **Elasticsearch** → **Azure AI Search** (prod) — full-text search
-- **Firebase FCM** — push notifications
-- **YARP** — API Gateway
-- **Serilog** — structured logging
-- **OpenTelemetry** — distributed tracing + metrics
-- **Polly** — resilience (retry, circuit breaker)
-
-### Frontend
-- **React + TypeScript**
-- **TanStack Query** — server state
-- **Zustand** — client state (basket)
-- **React Router v7**
-
-### Infrastructure
+- **EF Core + Npgsql** — ORM + PostgreSQL (separate DB per service)
+- **Keycloak** — Identity Provider (OpenID Connect / OAuth2), roles via realm_access
+- **Redis** — shopping basket (Basket.Api)
+- **RabbitMQ** — async messaging between services via MassTransit
+- **MinIO** — media file storage (avatars, product images)
+- **Elasticsearch** — full-text product search with facets
 - **.NET Aspire** — local orchestration (service discovery, dashboard)
-- **Docker + docker-compose** — containerization
-- **Kubernetes / AKS** — production orchestration
-- **Azure Container Registry** — image registry
-- **Azure Key Vault** — secrets management
-- **Azure Monitor** — observability (prod)
 
-## Modules
+## Services
 
-| Module | Responsibility |
+| Service | Responsibility |
 |---|---|
-| **Identity** | Keycloak — auth, registration, roles |
-| **Catalog** | Products, categories, brands, sizes |
-| **Basket** | Shopping cart (Redis) |
-| **Order** | Order lifecycle, Outbox pattern |
-| **Payment** | Payment processing |
-| **Wishlist** | User wishlists |
-| **Review** | Product reviews and ratings |
-| **Inventory** | Stock management |
-| **Promotion** | Discounts, coupons, promo codes |
-| **Notification** | Firebase push notifications |
-| **Analytics** | Events, reports, dashboards |
-| **Admin** | Back-office management |
-| **Media** | File upload, image processing |
-| **Search** | Full-text search via Elasticsearch |
+| **Catalog.Api** | Products, categories, brands, sizes, reviews, ratings |
+| **Basket.Api** | Shopping cart (Redis), guest basket merge on login |
+| **Order.Api** | Orders, statuses, Nova Poshta tracking |
+| **Wishlist.Api** | User wishlist |
+| **AppHost** | .NET Aspire orchestrator |
+| **ServiceDefaults** | Shared: health checks, service discovery, telemetry |
+
+## Implemented
+
+- Product catalog with pagination, filters, Elasticsearch full-text search with facets
+- Basket for authenticated users and guests (guestId in cookie)
+- Guest basket merge on login
+- Checkout for both authenticated and guest users
+- Order statuses: Pending → Processing → Shipped → Delivered / Cancelled / Returned
+- Nova Poshta auto-tracking — `BackgroundService` polls TTN status every 30 min, auto-updates to `Delivered` (StatusCode 9) or `Returned` (StatusCode 7)
+- Product reviews with moderation (Pending / Approved / Rejected)
+- Product ratings — denormalized into Elasticsearch via `ReviewStatusChangedEvent`
+- Wishlist
+- Avatar upload (MinIO)
+- Vertical slice architecture (feature folders)
 
 ## Architecture
 
-**Microservices** — each service has its own process, database, and Docker container.
+**Vertical Slices** — each feature contains Command/Query, Handler, Validator, and Endpoint in one folder.
 
-**Vertical Slices** — each feature (use case) contains its query/command, handler, validator, and endpoint in one folder.
+**CQRS** — reads and writes separated via MediatR.
 
-**CQRS** — read and write operations separated via MediatR.
-
-**Async communication** — events between services via RabbitMQ (local) / Azure Service Bus (prod).
-
-**Outbox pattern** — guaranteed event delivery for Order and Payment services.
+**Async messaging** — events between services via RabbitMQ + MassTransit.
 
 ```
-[React] ──→ [YARP Gateway] ──→ [Catalog.API]
-                           ──→ [Basket.API]
-                           ──→ [Order.API]
-                           ──→ [Payment.API]
-                           ──→ ...
+[Frontend / Admin] ──→ [Catalog.Api]  ──→ [PostgreSQL]
+                   ──→ [Basket.Api]   ──→ [Redis]
+                   ──→ [Order.Api]    ──→ [PostgreSQL]
+                   ──→ [Wishlist.Api] ──→ [PostgreSQL]
 
-[Order.API] ──→ [RabbitMQ] ──→ [Inventory.API]
-                           ──→ [Notification.API]
-                           ──→ [Analytics.API]
+[Catalog.Api] ──→ [RabbitMQ] ──→ [Catalog.Api consumer] (ReviewStatusChangedEvent)
 
-[Keycloak] ← all services validate JWT token
+[Order.Api BackgroundService] ──→ [Nova Poshta API] (TTN tracking)
+
+[Keycloak] ← all services validate JWT
 ```
 
 ## Project Structure
 
 ```
-shoes-shop/
-├── src/
-│   ├── AppHost/                        # .NET Aspire orchestrator
-│   ├── ServiceDefaults/                # shared: telemetry, health checks, service discovery
-│   │
-│   ├── Gateway/
-│   │   └── ShoesShop.Gateway/          # YARP API Gateway
-│   │
-│   ├── Services/
-│   │   ├── Catalog/
-│   │   │   ├── ShoesShop.Catalog.Api/
-│   │   │   └── ShoesShop.Catalog.Tests/
-│   │   ├── Basket/
-│   │   ├── Order/
-│   │   ├── Payment/
-│   │   ├── Wishlist/
-│   │   ├── Review/
-│   │   ├── Inventory/
-│   │   ├── Promotion/
-│   │   ├── Notification/
-│   │   ├── Analytics/
-│   │   ├── Admin/
-│   │   ├── Media/
+shoes_shop/src/
+├── AppHost/                    # .NET Aspire orchestrator
+├── ServiceDefaults/            # health checks, service discovery
+├── Shared/ShoesShop.Shared/    # BaseEntity, Pagination, Events
+├── Catalog.Api/
+│   ├── Domain/                 # Product, Category, ProductReview, ReviewStatus
+│   ├── DTOs/
+│   ├── Features/               # vertical slices
+│   │   ├── Products/
+│   │   ├── Categories/
+│   │   ├── Reviews/
 │   │   └── Search/
-│   │
-│   └── Shared/
-│       └── ShoesShop.Shared/           # BaseEntity, Pagination, Events, errors
-│
-├── frontend/
-│   └── web/                            # React + TypeScript
-│
-├── k8s/
-│   └── helm/                           # Helm charts for AKS
-│
-└── docker-compose.yml
+│   ├── Infrastructure/         # CatalogDbContext, MinioService, ElasticsearchService
+│   ├── Configurations/         # EF entity configs
+│   └── Migrations/
+├── Basket.Api/
+│   └── Features/Basket/
+├── Order.Api/
+│   ├── Domain/                 # CustomerOrder, OrderItem, OrderStatus, DeliveryType
+│   ├── Features/Orders/        # CreateOrder, UpdateOrderStatus, SetTrackingNumber
+│   └── Infrastructure/         # NovaPoshtaTrackingClient, OrderTrackingBackgroundService
+└── Wishlist.Api/
 ```
 
-## Local Development
+## Getting Started
 
-Requires: .NET 10 SDK, Docker Desktop
+Requirements: .NET 10 SDK, Docker Desktop
 
 ```bash
 dotnet run --project src/AppHost
 ```
 
-Opens Aspire dashboard at `http://localhost:15888` — logs, traces, and health status for all services.
+Aspire dashboard at `http://localhost:15888` — logs, traces, health status for all services.
 
-## Production (Azure)
+## Backlog
 
-```bash
-azd init
-azd up
-```
+### Backend
+- **Polly** — resilience between services (retry, circuit breaker, timeout)
+- **Catalog.Api caching** — Redis cache for product list (TTL 5 min)
+- **Optimistic Concurrency** — RowVersion on CustomerOrder
+- **Redis Sorted Sets** — top popular products by sales
+- **Social login** — Google, GitHub via Keycloak Identity Providers
+- **Fix JWT authorization** — proper `Authority` + `Audience` validation instead of manual token parsing
+- **Stock check on checkout** — validate stockQuantity in CreateOrder, return 409 if insufficient
+- **Backend guestId generation** — `POST /api/basket/guest`
+- **SizeChart** — multiple size systems (EU/US/UK)
+- **OpenIddict migration** — replace Keycloak with OpenIddict (new Identity.Api)
 
-Deploys to AKS with Azure Database for PostgreSQL, Azure Cache for Redis, Azure Service Bus, Azure Blob Storage, Azure AI Search.
+### Email Notifications
+- **Notification Worker Service** — listens to RabbitMQ events (`OrderCreatedEvent`, `ReviewStatusChangedEvent`), sends via Resend or Brevo
+- Emails: order confirmation, status change, review approved/rejected
+
+### Payments
+- **WayForPay** — HMAC MD5 signed request, POST callback (UA market)
+- **Stripe** — PaymentIntent flow, webhook for payment confirmation
+
+### Tests
+- **Unit tests** — xUnit + EF SQLite in-memory + NSubstitute for Catalog.Api handlers
+- **Integration tests** — xUnit + Testcontainers.PostgreSql + WebApplicationFactory

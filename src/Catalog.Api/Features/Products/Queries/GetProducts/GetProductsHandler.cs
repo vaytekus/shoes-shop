@@ -42,6 +42,7 @@ public class GetProductsHandler(CatalogDbContext db) : IRequestHandler<GetProduc
             .Select(p => new ProductResponse(
                 p.Id,
                 p.Name,
+                p.ModelName,
                 p.Description,
                 p.Price,
                 p.Brand,

@@ -4,6 +4,7 @@ public class ProductDocument
 {
     public string Id { get; set; } = null!;
     public string Name { get; set; } = null!;
+    public string? ModelName { get; set; }
 
     public string? Brand { get; set; }
     public string? Section { get; set; }

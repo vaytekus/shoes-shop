@@ -19,6 +19,7 @@ public class UpdateProductHandler(CatalogDbContext db, IPublishEndpoint publish)
         }
 
         product.Name = request.Name;
+        product.ModelName = request.ModelName;
         product.Description = request.Description;
         product.Price = request.Price;
         product.Brand = request.Brand;

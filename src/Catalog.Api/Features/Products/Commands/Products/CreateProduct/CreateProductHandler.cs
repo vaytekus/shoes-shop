@@ -14,6 +14,7 @@ public class CreateProductHandler(CatalogDbContext db, IPublishEndpoint publish)
         {
             Id = Guid.NewGuid(),
             Name = request.Name,
+            ModelName = request.ModelName,
             Description = request.Description,
             Price = request.Price,
             Brand = request.Brand,

@@ -8,6 +8,7 @@ public static class ProductDocumentMapper
     {
         Id = p.Id.ToString(),
         Name = p.Name,
+        ModelName = p.ModelName,
         Brand = p.Brand,
         Section = p.Section,
         CategoryName = p.Category?.Name,

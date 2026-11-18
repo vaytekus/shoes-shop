@@ -2,6 +2,7 @@ namespace Catalog.Api.DTOs;
 
 public record UpdateProductRequest(
     string Name,
+    string? ModelName,
     string Description,
     decimal Price,
     string? Brand,

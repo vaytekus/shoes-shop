@@ -2,7 +2,10 @@ using System.Text.Json;
 
 namespace Order.Api.Infrastructure;
 
-public class NovaPoshtaTrackingClient(HttpClient http, IConfiguration config)
+public class NovaPoshtaTrackingClient(
+    HttpClient http,
+    IConfiguration config,
+    ILogger<NovaPoshtaTrackingClient> logger)
 {
     private readonly string _apiKey = config["NovaPoshta:ApiKey"]!;
     private readonly string _apiUrl = config["NovaPoshta:ApiUrl"]!;
@@ -14,11 +17,14 @@ public class NovaPoshtaTrackingClient(HttpClient http, IConfiguration config)
             apiKey = _apiKey,
             modelName = "TrackingDocument",
             calledMethod = "getStatusDocuments",
-            methodProperties = new
+            methodProperties = new Dictionary<string, object>
             {
-                Documents = new[]
+                ["Documents"] = new List<Dictionary<string, object>>
                 {
-                    new { DocumentNumber = trackingNumber }
+                    new ()
+                    {
+                        ["DocumentNumber"] = trackingNumber
+                    }
                 }
             }
         };

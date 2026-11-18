@@ -12,6 +12,7 @@ public static class CreateProductEndpoint
     {
         var command = new CreateProductCommand(
         request.Name,
+        request.ModelName,
         request.Description,
         request.Price,
         request.Brand,

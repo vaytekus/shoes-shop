@@ -13,6 +13,7 @@ using Catalog.Api.Features.Products.Commands.ReindexProducts;
 using Catalog.Api.Features.Products.Commands.Variants.CreateVariant;
 using Catalog.Api.Features.Products.Commands.Variants.DeleteVariant;
 using Catalog.Api.Features.Products.Commands.Variants.SetPrimaryVariant;
+using Catalog.Api.Features.Products.Queries.CheckStock;
 using Catalog.Api.Features.Products.Queries.GetProductById;
 using Catalog.Api.Features.Products.Queries.GetProducts;
 using Catalog.Api.Features.Products.Queries.SearchProducts;
@@ -112,6 +113,11 @@ public static class ProductsModule
             .WithName("SetPrimaryVariant")
             .WithSummary("SetPrimaryVariant")
             .RequireAuthorization("AdminOnly");
+
+        group.MapPost("/stock/check", StockCheckEndpoint.Handle)
+            .WithName("CheckStock")
+            .WithSummary("CheckStock")
+            .AllowAnonymous();
 
         return app;
     }
